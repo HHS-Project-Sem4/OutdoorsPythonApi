@@ -11,6 +11,8 @@ async def root():
     t = test()
     await t.updateStar()
 
+    return {"message": "updating"}
+
 
 @app.get("/")
 async def root():
