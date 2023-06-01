@@ -1,6 +1,9 @@
 # Choose our version of Python
 FROM python:3.9
 
+# Install unixodbc-dev
+RUN apt-get update && apt-get install -y unixodbc-dev
+
 # Set up a working directory
 WORKDIR /code
 
