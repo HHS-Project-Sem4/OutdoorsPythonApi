@@ -5,10 +5,12 @@ from app.Services.StarService import StarService
 from app.Tools import utils
 from app.Repositories.CrudRepository import Repository
 
+
 class SalesService(StarService):
 
     def __init__(self, server, username, password, driver, trustedConnection):
-        repository = Repository(self.constructConnectionString(driver, server, 'Sales_db', username, password, trustedConnection))
+        repository = Repository(
+            self.constructConnectionString(driver, server, 'Sales_db', username, password, trustedConnection))
         super().__init__(repository)
 
         self.salesData = self.repository.findAll('Sales')
