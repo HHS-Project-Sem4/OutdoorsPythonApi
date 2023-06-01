@@ -1,5 +1,6 @@
-fastapi
-pandas
-sqlalchemy
+fastapi~=0.95.2
+pandas~=2.0.2
 azure-functions
 uvicorn
+pyodbc
+SQLAlchemy~=2.0.15

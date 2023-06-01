@@ -1,19 +1,25 @@
+import numpy as np
 import pandas as pd
-from Merging.Tools import utils
-from Merging.Repositories.Repository import Repository
 
-class SalesRepository(Repository):
-    def __init__(self, connectionString):
-        super(SalesRepository, self).__init__(connectionString)
+from app.Services.StarService import StarService
+from app.Tools import utils
+from app.Repositories.CrudRepository import Repository
 
-        self.salesDataFrame = pd.read_sql("SELECT null AS OrderID, * FROM Sales", self.engine)
+class SalesService(StarService):
+
+    def __init__(self, server, username, password, driver, trustedConnection):
+        repository = Repository(self.constructConnectionString(driver, server, 'Sales_db', username, password, trustedConnection))
+        super().__init__(repository)
+
+        self.salesData = self.repository.findAll('Sales')
 
     def getProductDataFrame(self):
-        sales = utils.addIntIDUnique(self.salesDataFrame, 'Product', 'prod_id')
+        sales = utils.addIntIDUnique(self.salesData, 'Product', 'prod_id')
 
         columns = ['Product', 'Product_Category', 'Sub_Category', 'Unit_Cost']
+
         newFrames = utils.splitFrames(sales, 'prod_id', columns)
-        self.salesDataFrame = newFrames[0]
+        self.salesData = newFrames[0]
         productData = newFrames[1]
 
         newColumnNames = ['PRODUCT_id', 'PRODUCT_name', 'PRODUCT_category', 'PRODUCT_sub_category', 'PRODUCT_prod_cost']
@@ -39,9 +45,9 @@ class SalesRepository(Repository):
         return pd.DataFrame()
 
     def getDayDataFrame(self):
-        newFrames = utils.splitFrames(self.salesDataFrame, 'Date', [])
+        newFrames = utils.splitFrames(self.salesData, 'Date', [])
 
-        self.salesDataFrame = newFrames[0]
+        self.salesData = newFrames[0]
         orderDates = newFrames[1]
 
         dateFormat = '%Y-%m-%d'
@@ -49,18 +55,23 @@ class SalesRepository(Repository):
 
         return DAY_date
 
-    # Sales doesn't have a header ID or for Detail
     def getOrderDetailsDataFrame(self):
+        orderDetailsData = self.salesData
+
+        # create column for ids and fills it
+        orderDetailsData.insert(0, 'OrderID', np.nan)
+        orderDetailsData = utils.addIntID(orderDetailsData, 'OrderID')
+
         # selectedColumn = ['Order_Quantity', 'Unit_Price', 'Date', 'CUSTOMER_id', 'prod_id']
         selectedColumn = ['OrderID', 'Order_Quantity', 'Unit_Price', 'Date', 'prod_id']
 
-        orderDetailsData = self.salesDataFrame[selectedColumn]
-        orderDetailsData = utils.addIntID(orderDetailsData, 'OrderID')
+        orderDetailsData = orderDetailsData[selectedColumn]
 
         # renameColumns = ['ORDER_DETAIL_order_quantity', 'ORDER_DETAIL_unit_price', 'DAY_date', 'CUSTOMER_id', 'PRODUCT_id']
 
         renameColumns = ['ORDER_DETAIL_id', 'ORDER_DETAIL_order_quantity', 'ORDER_DETAIL_unit_price', 'DAY_date',
                          'PRODUCT_id']
+
         orderDetailsData.columns = renameColumns
 
         return orderDetailsData

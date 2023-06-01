@@ -24,12 +24,14 @@ def addIntIDUnique(sourceFrame, sourceColumn, idColumnName):
     originalFrame = sourceFrame.copy()
 
     uniqueValues = originalFrame[sourceColumn].unique()
-    originalFrame[idColumnName] = pd.Series(dtype=int)
+
+    originalFrame[idColumnName] = pd.Series(dtype='Int32')
 
     newId = 0
 
     for value in uniqueValues:
         condition = originalFrame[sourceColumn] == value
+
         originalFrame.loc[condition, idColumnName] = newId
 
         newId += 1
@@ -77,6 +79,7 @@ def mergeStarDiagrams(baseStarDiagram, addedStarDiagram, factFrameName, factFram
             for column in addTable.columns:
                 if idRegex in column:
                     createUniqueIDS(baseFactFrame, addedFactFrame, addTable, column)
+
         else:
             for column in addTable.columns:
                 if column == factFramePrimaryKey:
@@ -84,6 +87,7 @@ def mergeStarDiagrams(baseStarDiagram, addedStarDiagram, factFrameName, factFram
                     createUniqueIDS2(baseFactFrame, addTable, column)
 
         baseTable = pd.concat([baseTable, addTable])
+
         baseTable.name = tableName
 
         resultFrame = [baseTable if df.name == tableName else df for df in resultFrame]
@@ -101,7 +105,7 @@ def createUniqueIDS2(baseFactFrame, frameToFix, column):
     id_list = range(newIDValue, (newIDValue + len(frameToFix)))
     frameToFix[column] = id_list
 
-# Creates new IDS and links to the factframe
+# Creates new IDS and links to the factframe, doesnt change the id for -1 values because it assumes -1 is null from previous data cleaning
 def createUniqueIDS(baseFactFrame, addedFactFrame, frameToFix, column):
     newIDValue = 0
 
@@ -110,13 +114,15 @@ def createUniqueIDS(baseFactFrame, addedFactFrame, frameToFix, column):
         newIDValue += 5000
 
     for index, value in frameToFix[column].items():
-        condition1 = addedFactFrame[column] == value
-        addedFactFrame.loc[condition1, column] = newIDValue
 
-        condition1 = frameToFix[column] == value
-        frameToFix.loc[condition1, column] = newIDValue
+        if value != -1:
+            condition1 = addedFactFrame[column] == value
+            addedFactFrame.loc[condition1, column] = newIDValue
 
-        newIDValue += 1
+            condition1 = frameToFix[column] == value
+            frameToFix.loc[condition1, column] = newIDValue
+
+            newIDValue += 1
 
 
 def dupC(df):

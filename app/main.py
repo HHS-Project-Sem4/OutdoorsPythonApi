@@ -1,10 +1,14 @@
 from fastapi import FastAPI
+from test import test
 
 app = FastAPI()
 
 
 @app.get("/")
 async def root():
+    t = test()
+
+    t.updateStar()
     return {"message": "Hello World"}
 
 

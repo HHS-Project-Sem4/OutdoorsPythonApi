@@ -1,6 +1,6 @@
 import pandas as pd
-from Merging.Tools import utils
-from Merging.Repositories.Repository import Repository
+from app.Repositories.CrudRepository import Repository
+
 
 class AdventureRepository(Repository):
     def __init__(self, connectionString):
@@ -16,13 +16,7 @@ class AdventureRepository(Repository):
         GROUP BY p.ProductID, p.Name, pc.Name, psc.Name, p.Color, p.StandardCost
         """
 
-        productData = pd.read_sql(productJoinQuery, self.engine)
-
-        renameColumns = ['PRODUCT_id', 'PRODUCT_name', 'PRODUCT_category', 'PRODUCT_sub_category', 'PRODUCT_colour',
-                         'PRODUCT_prod_cost', 'PRODUCT_storage_quantity']
-        productData.columns = renameColumns
-
-        return productData
+        return pd.read_sql(productJoinQuery, self.engine)
 
     def getCustomerDataFrame(self):
         # Distinct because of the one to many from customer -> address, only other easy way is to just exclude anything related to address
@@ -38,16 +32,7 @@ class AdventureRepository(Repository):
         JOIN person.CountryRegion cr ON sp.CountryRegionCode = cr.CountryRegionCode
         """
 
-        customerData = pd.read_sql(customerJoinQuery, self.engine)
-
-        renameColumns = ['CUSTOMER_id', 'CUSTOMER_address', 'CUSTOMER_city', 'CUSTOMER_state', 'CUSTOMER_country',
-                         'CUSTOMER_company_name']
-        customerData.columns = renameColumns
-
-        # dropping duplicates on this column because of the one to many relationship with businessentity and businessEntityAddress, only other way is to just exclude the address etc data
-        customerData.drop_duplicates(subset=['CUSTOMER_id'])
-
-        return customerData
+        return pd.read_sql(customerJoinQuery, self.engine)
 
     def getEmployeeDataFrame(self):
         employeeJoinQuery = """
@@ -61,35 +46,24 @@ class AdventureRepository(Repository):
         JOIN person.CountryRegion cr ON psp.CountryRegionCode = cr.CountryRegionCode
         """
 
-        employeeData = pd.read_sql(employeeJoinQuery, self.engine)
-
-        # Rename columns
-        renameColumns = ['EMPLOYEE_id', 'EMPLOYEE_first_name', 'EMPLOYEE_last_name', 'EMPLOYEE_city', 'EMPLOYEE_state',
-                         'EMPLOYEE_country']
-        employeeData.columns = renameColumns
-
-        return employeeData
+        return pd.read_sql(employeeJoinQuery, self.engine)
 
     def getDayDataFrame(self):
-        orderDates = pd.read_sql("SELECT DISTINCT OrderDate FROM sales.SalesOrderHeader", self.engine)
+        return pd.read_sql("SELECT DISTINCT OrderDate FROM sales.SalesOrderHeader", self.engine)
 
-        dateFormat = '%Y-%m-%d'
-        DAY_date = utils.getDayDate(orderDates, 'OrderDate', dateFormat)
-
-        return DAY_date
+    import pandas as pd
 
     def getOrderDetailsDataFrame(self):
         orderDetailsQuery = """
-        SELECT SalesOrderDetailID, sd.SalesOrderID,OrderQty, UnitPrice, OrderDate,SalesPersonID, CustomerID ,ProductID
-        FROM sales.SalesOrderDetail sd
-        JOIN sales.SalesOrderHeader sh ON sd.SalesOrderID = sh.SalesOrderID
+            SELECT SalesOrderDetailID, sd.SalesOrderID, OrderQty, UnitPrice, OrderDate, sh.SalesPersonID, CustomerID, ProductID
+            FROM sales.SalesOrderDetail sd
+            JOIN sales.SalesOrderHeader sh ON sd.SalesOrderID = sh.SalesOrderID
         """
 
-        orderDetailsData = pd.read_sql(orderDetailsQuery, self.engine)
+        data = pd.read_sql(orderDetailsQuery, self.engine)
 
-        renameColumns = ['ORDER_DETAIL_id', 'ORDER_HEADER_id', 'ORDER_DETAIL_order_quantity', 'ORDER_DETAIL_unit_price',
-                         'DAY_date',
-                         'EMPLOYEE_id', 'CUSTOMER_id', 'PRODUCT_id']
-        orderDetailsData.columns = renameColumns
+        data[['SalesPersonID']] = data[['SalesPersonID']].fillna(-1)
+        types = {'SalesPersonID': int}
+        data = data.astype(types)
 
-        return orderDetailsData
+        return data
