@@ -7,7 +7,7 @@ class AdventureWorksService(StarService):
 
     def __init__(self, server, username, password, driver, trustedConnection):
         repository = AdventureRepository(
-            self.constructConnectionString(driver, server, 'AdventureWorks', username, password, trustedConnection))
+            utils.constructConnectionString(driver, server, 'AdventureWorks', username, password, trustedConnection))
 
         super().__init__(repository)
 

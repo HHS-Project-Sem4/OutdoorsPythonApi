@@ -38,6 +38,7 @@ def addIntIDUnique(sourceFrame, sourceColumn, idColumnName):
 
     return originalFrame
 
+
 def addIntID(sourceFrame, idColumnName):
     originalFrame = sourceFrame.copy()
 
@@ -83,7 +84,6 @@ def mergeStarDiagrams(baseStarDiagram, addedStarDiagram, factFrameName, factFram
         else:
             for column in addTable.columns:
                 if column == factFramePrimaryKey:
-
                     createUniqueIDS2(baseFactFrame, addTable, column)
 
         baseTable = pd.concat([baseTable, addTable])
@@ -93,6 +93,7 @@ def mergeStarDiagrams(baseStarDiagram, addedStarDiagram, factFrameName, factFram
         resultFrame = [baseTable if df.name == tableName else df for df in resultFrame]
 
     return resultFrame
+
 
 # Creates a set of new ids for an ID column that is not linked to something, uses range to compare it to the frame it gets added to
 def createUniqueIDS2(baseFactFrame, frameToFix, column):
@@ -104,6 +105,7 @@ def createUniqueIDS2(baseFactFrame, frameToFix, column):
 
     id_list = range(newIDValue, (newIDValue + len(frameToFix)))
     frameToFix[column] = id_list
+
 
 # Creates new IDS and links to the factframe, doesnt change the id for -1 values because it assumes -1 is null from previous data cleaning
 def createUniqueIDS(baseFactFrame, addedFactFrame, frameToFix, column):
@@ -133,13 +135,29 @@ def dupC(df):
                 print(f'COLUMN: {column} HAS {duplicate_count} OF DUPLICATED VALUES')
 
 
+def constructConnectionString(driver, server, dbName, username, password, trustedConnection):
+    return f"DRIVER={driver};SERVER={server};DATABASE={dbName};UID={username};PWD={password};trusted_connection={trustedConnection}"
+
+
 def createEmptyStarFrame():
     column_data = [
-        {'name': 'Product', 'columns': ['PRODUCT_id', 'PRODUCT_name', 'PRODUCT_category', 'PRODUCT_sub_category', 'PRODUCT_colour', 'PRODUCT_prod_cost', 'PRODUCT_storage_quantity'], 'dtype': {'PRODUCT_id': 'Int32'}},
-        {'name': 'Customer', 'columns': ['CUSTOMER_id', 'CUSTOMER_address', 'CUSTOMER_city', 'CUSTOMER_state', 'CUSTOMER_region', 'CUSTOMER_country', 'CUSTOMER_company_name'], 'dtype': {'CUSTOMER_id': 'Int32'}},
-        {'name': 'Employee', 'columns': ['EMPLOYEE_id', 'EMPLOYEE_first_name', 'EMPLOYEE_last_name', 'EMPLOYEE_city', 'EMPLOYEE_state', 'EMPLOYEE_region', 'EMPLOYEE_country'], 'dtype': {'EMPLOYEE_id': 'Int32'}},
-        {'name': 'Order_Date', 'columns': ['DAY_date', 'DAY_MONTH_nr', 'DAY_QUARTER_nr', 'DAY_YEAR_nr'], 'dtype': {'DAY_date': 'datetime64[ns]', 'DAY_MONTH_nr': 'Int8', 'DAY_QUARTER_nr': 'Int8', 'DAY_YEAR_nr': 'Int16'}},
-        {'name': 'Order_Details', 'columns': ['ORDER_DETAIL_id', 'ORDER_HEADER_id', 'ORDER_DETAIL_order_quantity', 'ORDER_DETAIL_unit_price', 'DAY_date', 'EMPLOYEE_id', 'CUSTOMER_id', 'PRODUCT_id'], 'dtype': {'ORDER_DETAIL_id': 'Int32', 'ORDER_HEADER_id': 'Int32', 'DAY_date': 'datetime64[ns]', 'EMPLOYEE_id': 'Int32', 'CUSTOMER_id': 'Int32', 'PRODUCT_id': 'Int32'}}
+        {'name': 'Product',
+         'columns': ['PRODUCT_id', 'PRODUCT_name', 'PRODUCT_category', 'PRODUCT_sub_category', 'PRODUCT_colour',
+                     'PRODUCT_prod_cost', 'PRODUCT_storage_quantity'], 'dtype': {'PRODUCT_id': 'Int32'}},
+        {'name': 'Customer',
+         'columns': ['CUSTOMER_id', 'CUSTOMER_address', 'CUSTOMER_city', 'CUSTOMER_state', 'CUSTOMER_region',
+                     'CUSTOMER_country', 'CUSTOMER_company_name'], 'dtype': {'CUSTOMER_id': 'Int32'}},
+        {'name': 'Employee',
+         'columns': ['EMPLOYEE_id', 'EMPLOYEE_first_name', 'EMPLOYEE_last_name', 'EMPLOYEE_city', 'EMPLOYEE_state',
+                     'EMPLOYEE_region', 'EMPLOYEE_country'], 'dtype': {'EMPLOYEE_id': 'Int32'}},
+        {'name': 'Order_Date', 'columns': ['DAY_date', 'DAY_MONTH_nr', 'DAY_QUARTER_nr', 'DAY_YEAR_nr'],
+         'dtype': {'DAY_date': 'datetime64[ns]', 'DAY_MONTH_nr': 'Int8', 'DAY_QUARTER_nr': 'Int8',
+                   'DAY_YEAR_nr': 'Int16'}},
+        {'name': 'Order_Details',
+         'columns': ['ORDER_DETAIL_id', 'ORDER_HEADER_id', 'ORDER_DETAIL_order_quantity', 'ORDER_DETAIL_unit_price',
+                     'DAY_date', 'EMPLOYEE_id', 'CUSTOMER_id', 'PRODUCT_id'],
+         'dtype': {'ORDER_DETAIL_id': 'Int32', 'ORDER_HEADER_id': 'Int32', 'DAY_date': 'datetime64[ns]',
+                   'EMPLOYEE_id': 'Int32', 'CUSTOMER_id': 'Int32', 'PRODUCT_id': 'Int32'}}
     ]
 
     data = []
@@ -149,4 +167,3 @@ def createEmptyStarFrame():
         data.append(df)
 
     return data
-

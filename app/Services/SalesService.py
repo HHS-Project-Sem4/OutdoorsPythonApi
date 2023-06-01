@@ -10,7 +10,7 @@ class SalesService(StarService):
 
     def __init__(self, server, username, password, driver, trustedConnection):
         repository = Repository(
-            self.constructConnectionString(driver, server, 'Sales_db', username, password, trustedConnection))
+            utils.constructConnectionString(driver, server, 'Sales_db', username, password, trustedConnection))
         super().__init__(repository)
 
         self.salesData = self.repository.findAll('Sales')

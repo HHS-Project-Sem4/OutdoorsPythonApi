@@ -5,7 +5,7 @@ from app.Repositories.AENCRepository import AENCRepository
 class AENCService(StarService):
 
     def __init__(self, server, username, password, driver, trustedConnection):
-        repository = AENCRepository(self.constructConnectionString(driver, server, 'AENC', username, password, trustedConnection))
+        repository = AENCRepository(utils.constructConnectionString(driver, server, 'AENC', username, password, trustedConnection))
 
         super().__init__(repository)
 

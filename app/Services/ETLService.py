@@ -7,7 +7,7 @@ class ETLService(CrudService):
 
     def __init__(self, server, username, password, driver, trustedConnection):
         repository = Repository(
-            self.constructConnectionString(driver, server, 'OutdoorFusion', username, password, trustedConnection))
+            utils.constructConnectionString(driver, server, 'OutdoorFusion', username, password, trustedConnection))
 
         super().__init__(repository)
 

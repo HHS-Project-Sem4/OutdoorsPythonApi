@@ -7,7 +7,7 @@ class NorthwindService(StarService):
 
     def __init__(self, server, username, password, driver, trustedConnection):
         repository = NorthwindRepository(
-            self.constructConnectionString(driver, server, 'Northwind', username, password, trustedConnection))
+            utils.constructConnectionString(driver, server, 'Northwind', username, password, trustedConnection))
 
         super().__init__(repository)
 
