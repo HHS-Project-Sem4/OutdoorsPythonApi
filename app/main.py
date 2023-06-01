@@ -13,8 +13,8 @@ async def root():
         t.updateStar()
 
         return {"message": "Updated"}
-    except:
-        return {"message": "Update failed"}
+    except Exception as e:
+        return {"message": e}
 
 
 @app.get("/test")
