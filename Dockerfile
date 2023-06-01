@@ -1,6 +1,9 @@
 # Choose our version of Python
 FROM python:3.9
 
+# Install msodbcsql17
+RUN apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql17
+
 # Install unixodbc-dev
 RUN apt-get update && apt-get install -y unixodbc-dev
 
