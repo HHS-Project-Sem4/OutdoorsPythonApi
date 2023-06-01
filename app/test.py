@@ -7,7 +7,7 @@ from app.Services.SalesService import SalesService
 
 class test:
 
-    async def updateStar(self):
+    def updateStar(self):
         server = 'outdoorfusionserver.database.windows.net'
         username = 'floep'
         password = 'WaaromWilDePausNietGecremeerdWorden?HijLeeftNog'

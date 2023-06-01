@@ -9,10 +9,16 @@ async def root():
     print('START UPDATE')
 
     t = test()
-    await t.updateStar()
+    t.updateStar()
 
     return {"message": "updating"}
 
+
+@app.get("/test")
+async def root():
+    print('START UPDATE')
+
+    return {"message": "tester"}
 
 @app.get("/")
 async def root():
