@@ -1,17 +1,18 @@
-from Services.ETLService import ETLService
-from Services.AENCService import AENCService
-from Services.AdventureWorksService import AdventureWorksService
-from Services.SalesService import SalesService
-from Services.NorthwindService import NorthwindService
+from app.Services.AENCService import AENCService
+from app.Services.AdventureWorksService import AdventureWorksService
+from app.Services.ETLService import ETLService
+from app.Services.NorthwindService import NorthwindService
+from app.Services.SalesService import SalesService
+
 
 class test:
 
-    def updateStar(self):
-        server = 'DESKTOP-8INVJ1O\SQLEXPRESS'
-        username = 'DESKTOP-8INVJ1O\Max'
-        password = ''
+    async def updateStar(self):
+        server = 'outdoorfusionserver.database.windows.net'
+        username = 'floep'
+        password = 'WaaromWilDePausNietGecremeerdWorden?HijLeeftNog'
         driver = '{ODBC Driver 17 for SQL Server}'
-        trustedConnection = 'yes'
+        trustedConnection = 'no'
 
         etlService = ETLService(server, username, password, driver, trustedConnection)
 

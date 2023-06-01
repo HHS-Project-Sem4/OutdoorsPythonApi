@@ -51,8 +51,6 @@ class AdventureRepository(Repository):
     def getDayDataFrame(self):
         return pd.read_sql("SELECT DISTINCT OrderDate FROM sales.SalesOrderHeader", self.engine)
 
-    import pandas as pd
-
     def getOrderDetailsDataFrame(self):
         orderDetailsQuery = """
             SELECT SalesOrderDetailID, sd.SalesOrderID, OrderQty, UnitPrice, OrderDate, sh.SalesPersonID, CustomerID, ProductID
