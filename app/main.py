@@ -6,12 +6,15 @@ app = FastAPI()
 
 @app.get("/update")
 async def root():
-    print('START UPDATE')
+    try:
+        print('START UPDATE')
 
-    t = test()
-    t.updateStar()
+        t = test()
+        t.updateStar()
 
-    return {"message": "updating"}
+        return {"message": "Updated"}
+    except:
+        return {"message": "Update failed"}
 
 
 @app.get("/test")
