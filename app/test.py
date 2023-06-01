@@ -19,7 +19,7 @@ class test:
 
         connectionString = utils.constructConnectionString(driver, server, 'Sales_db', username, password, trustedConnection)
 
-        repository = Repository(connectionString)
+        # repository = Repository(connectionString)
 
 
         # etlService = ETLService(server, username, password, driver, trustedConnection)
