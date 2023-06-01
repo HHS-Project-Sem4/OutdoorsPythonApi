@@ -10,6 +10,9 @@ COPY ./requirements.txt /code/requirements.txt
 # Install the dependencies from the requirements file
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
+# Install unixODBC and MSODBCSQL17
+RUN apt-get update && apt-get install -y unixodbc-dev && ACCEPT_EULA=Y apt-get install -y msodbcsql17
+
 # Copy the code into the working directory
 COPY ./app /code/app
 
