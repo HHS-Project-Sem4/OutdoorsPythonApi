@@ -1,10 +1,9 @@
-# Choose our version of Python
 FROM python:3.9
 
 RUN apt-get install g++
-
-# Install unixodbc-dev
 RUN apt-get update && apt-get install -y unixodbc-dev
+
+RUN pip install pyodbc
 
 # Set up a working directory
 WORKDIR /code
