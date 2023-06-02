@@ -4,6 +4,5 @@ SQLAlchemy~=2.0.15
 
 azure-functions
 uvicorn
-pyodbc
 
 numpy~=1.24.3
