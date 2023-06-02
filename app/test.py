@@ -3,7 +3,7 @@ from app.Services.AdventureWorksService import AdventureWorksService
 from app.Services.ETLService import ETLService
 from app.Services.NorthwindService import NorthwindService
 from app.Services.SalesService import SalesService
-from app.Repositories.CrudRepository import Repository
+from app.Repositories.AENCRepository import AENCRepository
 from app.Tools import utils
 class test:
 
@@ -14,8 +14,9 @@ class test:
         driver = '{ODBC Driver 17 for SQL Server}'
         trustedConnection = 'no'
 
-        repo = Repository(utils.constructConnectionString(driver,server, 'AENC', username,password,trustedConnection))
+        aencRepo = AENCRepository(utils.constructConnectionString(driver,server, 'AENC', username,password,trustedConnection))
 
+        testData = aencRepo.getDayDataFrame()
         # etlService = ETLService(server, username, password, driver, trustedConnection)
         #
         # northWindService = NorthwindService(server, username, password, driver, trustedConnection)
