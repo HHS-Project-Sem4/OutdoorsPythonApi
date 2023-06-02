@@ -11,7 +11,7 @@ async def root():
     print('START UPDATE')
 
     t = test()
-    t.updateStar()
+    await t.updateStar()
 
     return {"message": "Updated"}
 
