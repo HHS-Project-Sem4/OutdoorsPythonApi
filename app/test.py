@@ -6,6 +6,8 @@ from app.Services.SalesService import SalesService
 from app.Repositories.CrudRepository import Repository
 from app.Repositories.AENCRepository import AENCRepository
 from app.Tools import utils
+
+
 class test:
 
     def updateStar(self):
@@ -23,9 +25,10 @@ class test:
         salesService = SalesService(server, username, password, driver, trustedConnection)
 
         nStar = northWindService.getStarData()
-        aencStar = aencService.getStarData()
+        # aencStar = aencService.getStarData()
         adventureStar = adventureWorksService.getStarData()
         salesStar = salesService.getStarData()
+
 
         # dataSets = [
         #     {'setName': 'Northwind', 'dataService': northWindService},
