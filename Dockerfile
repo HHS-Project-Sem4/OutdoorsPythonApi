@@ -1,9 +1,4 @@
-FROM python:3.8
-
-RUN apt-get install g++
-RUN apt-get update && apt-get install -y unixodbc-dev
-
-RUN pip install pyodbc
+FROM python:3.8-alpine
 
 # Set up a working directory
 WORKDIR /code
@@ -12,7 +7,13 @@ WORKDIR /code
 COPY ./requirements.txt /code/requirements.txt
 
 # Install the dependencies from the requirements file
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN apk update && \
+    apk add --no-cache --virtual .build-deps \
+    build-base \
+    libressl-dev \
+    libffi-dev \
+    && pip install --no-cache-dir --upgrade -r /code/requirements.txt \
+    && apk del .build-deps
 
 # Copy the code into the working directory
 COPY ./app /code/app
