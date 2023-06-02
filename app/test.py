@@ -15,26 +15,17 @@ class test:
         driver = '{ODBC Driver 17 for SQL Server}'
         trustedConnection = 'no'
 
-        aencRepo = AENCRepository(utils.constructConnectionString(driver,server, 'AENC', username,password,trustedConnection))
+        etlService = ETLService(server, username, password, driver, trustedConnection)
 
-        testData = aencRepo.getDayDataFrame()
-
-        outdoorRepo = Repository(utils.constructConnectionString(driver,server, 'OutdoorFusion', username,password,trustedConnection))
-        outdoorRepo.dropTable('Product')
-
-        # etlService = ETLService(server, username, password, driver, trustedConnection)
-        #
-        # northWindService = NorthwindService(server, username, password, driver, trustedConnection)
-        # aencService = AENCService(server, username, password, driver, trustedConnection)
-
+        northWindService = NorthwindService(server, username, password, driver, trustedConnection)
+        aencService = AENCService(server, username, password, driver, trustedConnection)
         adventureWorksService = AdventureWorksService(server, username, password, driver, trustedConnection)
-        # salesService = SalesService(server, username, password, driver, trustedConnection)
+        salesService = SalesService(server, username, password, driver, trustedConnection)
 
-        prodData = adventureWorksService.getProductDataFrame()
-
-        outdoorRepo.saveDateFrame(prodData, 'Product')
-
-        outdoorRepo.dropTable('Product')
+        nStar = northWindService.getStarData()
+        aencStar = aencService.getStarData()
+        adventureStar = adventureWorksService.getStarData()
+        salesStar = salesService.getStarData()
 
         # dataSets = [
         #     {'setName': 'Northwind', 'dataService': northWindService},
