@@ -3,9 +3,6 @@ from app.Services.AdventureWorksService import AdventureWorksService
 from app.Services.ETLService import ETLService
 from app.Services.NorthwindService import NorthwindService
 from app.Services.SalesService import SalesService
-from app.Repositories.CrudRepository import Repository
-from app.Repositories.AENCRepository import AENCRepository
-from app.Tools import utils
 
 
 class test:
@@ -24,22 +21,11 @@ class test:
         adventureWorksService = AdventureWorksService(server, username, password, driver, trustedConnection)
         salesService = SalesService(server, username, password, driver, trustedConnection)
 
-        nStar = northWindService.getStarData()
-        # aencStar = aencService.getStarData()
-        adventureStar = adventureWorksService.getStarData()
-        salesStar = salesService.getStarData()
+        dataSets = [
+            {'setName': 'Northwind', 'dataService': northWindService},
+            {'setName': 'AENC', 'dataService': aencService},
+            {'setName': 'AdventureWorks', 'dataService': adventureWorksService},
+            {'setName': 'Sales_db', 'dataService': salesService}
+        ]
 
-
-        # dataSets = [
-        #     {'setName': 'Northwind', 'dataService': northWindService},
-        #     {'setName': 'AENC', 'dataService': aencService},
-        #     {'setName': 'AdventureWorks', 'dataService': adventureWorksService},
-        #     {'setName': 'Sales_db', 'dataService': salesService}
-        # ]
-
-        # dataSets = [
-        #     {'setName': 'Northwind', 'dataService': northWindService},
-        #     {'setName': 'AENC', 'dataService': aencService},
-        # ]
-        #
-        # etlService.completeUpdateStar(dataSets)
+        etlService.completeUpdateStar(dataSets)

@@ -38,7 +38,7 @@ class AENCService(StarService):
     def getDayDataFrame(self):
         orderDates = self.repository.getDayDataFrame()
 
-        dateFormat = '%d-%b-%Y %H:%M:%S %p'
+        dateFormat = '%Y-%m-%d %H:%M:%S.%f'
         DAY_date = utils.getDayDate(orderDates, 'order_date', dateFormat)
 
         return DAY_date
