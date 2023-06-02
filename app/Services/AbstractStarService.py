@@ -1,29 +1,31 @@
+from abc import abstractmethod
+
 from app.Services.CrudService import CrudService
 
 
+# idk how abstract classes work in python tbh
 class StarService(CrudService):
 
     def __init__(self, repository):
         super().__init__(repository)
 
-
-
+    @abstractmethod
     def getProductDataFrame(self):
         pass
 
-
+    @abstractmethod
     def getCustomerDataFrame(self):
         pass
 
-
+    @abstractmethod
     def getEmployeeDataFrame(self):
         pass
 
-
+    @abstractmethod
     def getDayDataFrame(self):
         pass
 
-
+    @abstractmethod
     def getOrderDetailsDataFrame(self):
         pass
 

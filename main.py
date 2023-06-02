@@ -1,6 +1,4 @@
-from fastapi import FastAPI
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
 
 from app.test import test
 
@@ -20,7 +18,7 @@ async def root():
 async def root():
     print('START UPDATE')
 
-    return {"message": "jk"}
+    return {"message": "jk3"}
 
 
 @app.get("/")

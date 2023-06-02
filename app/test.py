@@ -17,6 +17,7 @@ class test:
 
         northWindService = NorthwindService(server, username, password, driver, trustedConnection)
         aencService = AENCService(server, username, password, driver, trustedConnection)
+
         # adventureWorksService = AdventureWorksService(server, username, password, driver, trustedConnection)
         # salesService = SalesService(server, username, password, driver, trustedConnection)
 

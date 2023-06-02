@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from app.Services.StarService import StarService
+from app.Services.AbstractStarService import StarService
 from app.Tools import utils
 from app.Repositories.CrudRepository import Repository
 
