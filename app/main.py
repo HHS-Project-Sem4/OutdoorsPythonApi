@@ -18,7 +18,7 @@ async def root():
 async def root():
     print('START UPDATE')
 
-    return {"message": "jk3456789"}
+    return {"message": "jk34567890"}
 
 
 @app.get("/")
