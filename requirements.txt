@@ -1,7 +1,7 @@
 fastapi~=0.95.2
 pandas~=2.0.2
 SQLAlchemy~=2.0.15
-mssql-django
+
 azure-functions
 uvicorn
 pyodbc
