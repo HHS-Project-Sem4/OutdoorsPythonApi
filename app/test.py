@@ -3,11 +3,12 @@ from app.Services.AdventureWorksService import AdventureWorksService
 from app.Services.ETLService import ETLService
 from app.Services.NorthwindService import NorthwindService
 from app.Services.SalesService import SalesService
+from app.Repositories.CrudRepository import Repository
 from app.Repositories.AENCRepository import AENCRepository
 from app.Tools import utils
 class test:
 
-    async def updateStar(self):
+    def updateStar(self):
         server = 'outdoorfusionserver.database.windows.net'
         username = 'floep'
         password = 'WaaromWilDePausNietGecremeerdWorden?HijLeeftNog'
@@ -17,13 +18,23 @@ class test:
         aencRepo = AENCRepository(utils.constructConnectionString(driver,server, 'AENC', username,password,trustedConnection))
 
         testData = aencRepo.getDayDataFrame()
+
+        outdoorRepo = Repository(utils.constructConnectionString(driver,server, 'OutdoorFusion', username,password,trustedConnection))
+        outdoorRepo.dropTable('Product')
+
         # etlService = ETLService(server, username, password, driver, trustedConnection)
         #
         # northWindService = NorthwindService(server, username, password, driver, trustedConnection)
         # aencService = AENCService(server, username, password, driver, trustedConnection)
 
-        # adventureWorksService = AdventureWorksService(server, username, password, driver, trustedConnection)
+        adventureWorksService = AdventureWorksService(server, username, password, driver, trustedConnection)
         # salesService = SalesService(server, username, password, driver, trustedConnection)
+
+        prodData = adventureWorksService.getProductDataFrame()
+
+        outdoorRepo.saveDateFrame(prodData, 'Product')
+
+        outdoorRepo.dropTable('Product')
 
         # dataSets = [
         #     {'setName': 'Northwind', 'dataService': northWindService},

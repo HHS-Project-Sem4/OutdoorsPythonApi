@@ -9,7 +9,7 @@ async def root():
     print('START UPDATE')
 
     t = test()
-    await t.updateStar()
+    t.updateStar()
 
     return {"message": "Updated"}
 
