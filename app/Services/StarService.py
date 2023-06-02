@@ -7,6 +7,7 @@ class StarService(CrudService):
         super().__init__(repository)
 
 
+
     def getProductDataFrame(self):
         pass
 
