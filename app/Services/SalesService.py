@@ -1,26 +1,28 @@
 import numpy as np
 import pandas as pd
-
 from app.Services.AbstractStarService import StarService
-from app.Tools import utils
+from app.Tools import EtlUtil
 from app.Repositories.CrudRepository import Repository
+from app.Tools import DbUtil
 
 
 class SalesService(StarService):
 
-    def __init__(self, server, username, password, driver, trustedConnection):
-        repository = Repository(
-            utils.constructConnectionString(driver, server, 'Sales_db', username, password, trustedConnection))
+    def __init__(self):
+        # ref used in the db config ini that contains the dbName
+        dbRef = 'Sales_db'
+        repository = Repository(DbUtil.constructConnectionString(dbRef))
+
         super().__init__(repository)
 
         self.salesData = self.repository.findAll('Sales')
 
     def getProductDataFrame(self):
-        sales = utils.addIntIDUnique(self.salesData, 'Product', 'prod_id')
+        sales = EtlUtil.addUniqueIntIdColumn(self.salesData, 'Product', 'prod_id')
 
         columns = ['Product', 'Product_Category', 'Sub_Category', 'Unit_Cost']
 
-        newFrames = utils.splitFrames(sales, 'prod_id', columns)
+        newFrames = EtlUtil.splitDataFrame(sales, 'prod_id', columns)
         self.salesData = newFrames[0]
         productData = newFrames[1]
 
@@ -47,13 +49,13 @@ class SalesService(StarService):
         return pd.DataFrame()
 
     def getDayDataFrame(self):
-        newFrames = utils.splitFrames(self.salesData, 'Date', [])
+        newFrames = EtlUtil.splitDataFrame(self.salesData, 'Date', [])
 
         self.salesData = newFrames[0]
         orderDates = newFrames[1]
 
         dateFormat = '%Y-%m-%d'
-        DAY_date = utils.getDayDate(orderDates, 'Date', dateFormat)
+        DAY_date = EtlUtil.createDayDateDataframe(orderDates, 'Date', dateFormat)
 
         return DAY_date
 
@@ -62,7 +64,7 @@ class SalesService(StarService):
 
         # create column for ids and fills it
         orderDetailsData.insert(0, 'OrderID', np.nan)
-        orderDetailsData = utils.addIntID(orderDetailsData, 'OrderID')
+        orderDetailsData = EtlUtil.addIntID(orderDetailsData, 'OrderID')
 
         # selectedColumn = ['Order_Quantity', 'Unit_Price', 'Date', 'CUSTOMER_id', 'prod_id']
         selectedColumn = ['OrderID', 'Order_Quantity', 'Unit_Price', 'Date', 'prod_id']

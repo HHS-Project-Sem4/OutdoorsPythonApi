@@ -1,31 +1,20 @@
 from fastapi import FastAPI, Request
 
-from app.test import test
+from app.Updater import Updater
 
 app = FastAPI()
 
-@app.get("/update")
+@app.get("/updateStar")
 async def root():
-    print('START UPDATE')
+    try:
+        updater = Updater()
+        await updater.updateStar()
 
-    t = test()
-    await t.updateStar()
-
-    return {"message": "Updated"}
-
-
-@app.get("/test")
-async def root():
-    print('START UPDATE')
-
-    return {"message": "jk34567890"}
+        return {"message": "Updated"}
+    except:
+        return {"message": "Update failed"}
 
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+    return {"message": "Hello World!"}

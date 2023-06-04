@@ -1,11 +1,14 @@
 from app.Services.AbstractStarService import StarService
-from app.Tools import utils
+from app.Tools import EtlUtil
 from app.Repositories.AENCRepository import AENCRepository
+from app.Tools import DbUtil
 
 class AENCService(StarService):
 
-    def __init__(self, server, username, password, driver, trustedConnection):
-        repository = AENCRepository(utils.constructConnectionString(driver, server, 'AENC', username, password, trustedConnection))
+    def __init__(self):
+        # ref used in the db config ini that contains the dbName
+        dbRef = 'AENC'
+        repository = AENCRepository(DbUtil.constructConnectionString(dbRef))
 
         super().__init__(repository)
 
@@ -38,15 +41,20 @@ class AENCService(StarService):
     def getDayDataFrame(self):
         orderDates = self.repository.getDayDataFrame()
 
+        # az db
         dateFormat = '%Y-%m-%d %H:%M:%S.%f'
-        DAY_date = utils.getDayDate(orderDates, 'order_date', dateFormat)
+
+        # pv db
+        # dateFormat = '%d-%b-%Y %H:%M:%S %p'
+
+        DAY_date = EtlUtil.createDayDateDataframe(orderDates, 'order_date', dateFormat)
 
         return DAY_date
 
     def getOrderDetailsDataFrame(self):
         orderDetailsData = self.repository.getOrderDetailsDataFrame()
 
-        orderDetailsData = utils.addIntID(orderDetailsData, 'OrderDetailID')
+        orderDetailsData = EtlUtil.addIntID(orderDetailsData, 'OrderDetailID')
 
         renameColumns = ['ORDER_DETAIL_id', 'ORDER_HEADER_id', 'CUSTOMER_id', 'DAY_date', 'EMPLOYEE_id', 'PRODUCT_id',
                          'ORDER_DETAIL_unit_price', 'ORDER_DETAIL_order_quantity']

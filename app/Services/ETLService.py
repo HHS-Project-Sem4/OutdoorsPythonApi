@@ -1,19 +1,22 @@
 from app.Services.CrudService import CrudService
+from app.Tools import EtlUtil
 from app.Repositories.CrudRepository import Repository
-from app.Tools import utils
+from app.Tools import DbUtil
 
 
 class ETLService(CrudService):
 
-    def __init__(self, server, username, password, driver, trustedConnection):
-        repository = Repository(
-            utils.constructConnectionString(driver, server, 'OutdoorFusion', username, password, trustedConnection))
+    def __init__(self):
+        # ref used in the db config ini that contains the dbName
+        dbRef = 'OutdoorFusion'
+
+        repository = Repository(DbUtil.constructConnectionString(dbRef))
 
         super().__init__(repository)
 
     def mergeDataSets(self, dataSets):
         # create result frame
-        returnSet = utils.createEmptyStarFrame()
+        returnSet = EtlUtil.createEmptyStarFrame()
 
         for dataSet in dataSets:
             print(f'ADDING: {dataSet["setName"]}')
@@ -29,11 +32,12 @@ class ETLService(CrudService):
         # merging consts
         factFrameName = 'Order_Details'
         factFramePrimaryKey = 'ORDER_DETAIL_id'
+        factFrameNonLinkedIds = ['ORDER_HEADER_id']
         idRegex = '_id'
 
-        base = utils.mergeStarDiagrams(base, toAdd, factFrameName, factFramePrimaryKey, idRegex)
+        returnSet = EtlUtil.mergeStarDiagrams(returnSet, toAdd, factFrameName, factFramePrimaryKey, factFrameNonLinkedIds, idRegex)
 
-        return base
+        return returnSet
 
     def dropAllTables(self, dbTables):
         for table in dbTables:
@@ -51,10 +55,10 @@ class ETLService(CrudService):
 
         return mainData
 
-    def getCompleteUpdateStar(self, dataSets):
+    def getUpdatedStar(self, dataSets):
         # creating the save frame
         print('CREATING NEW FRAME')
-        mainData = utils.createEmptyStarFrame()
+        mainData = EtlUtil.createEmptyStarFrame()
 
         self.dropAllTables(mainData)
         print('TABLES CLEANED')
@@ -65,7 +69,7 @@ class ETLService(CrudService):
 
         print('MERGIN COMPLETE')
 
-        utils.dupC(mainData)
+        EtlUtil.checkColumnForDuplicates(mainData, '_id')
 
         # Drop Duplicate Dates
         print('FIX DATE TABLE')
@@ -73,8 +77,8 @@ class ETLService(CrudService):
 
         return mainData
 
-    def completeUpdateStar(self, dataSets):
-        mainData = self.getCompleteUpdateStar(dataSets)
+    def updateStar(self, dataSets):
+        mainData = self.getUpdatedStar(dataSets)
 
         # Make the uploading use virtual threads to increase the speed
         print('UPLOADING DATA')

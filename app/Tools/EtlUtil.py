@@ -1,7 +1,10 @@
 import pandas as pd
 
 
-def getDayDate(sourceFrame, sourceColumn, dateFormat):
+# methods for modifying current dataframes
+
+# Creates a new dataframe containing a Date as id and three columns for Month, Quarter and Year
+def createDayDateDataframe(sourceFrame, sourceColumn, dateFormat):
     dateColumns = ['DAY_date', 'DAY_MONTH_nr', 'DAY_QUARTER_nr', 'DAY_YEAR_nr']
     DAY_date = pd.DataFrame(columns=dateColumns)
 
@@ -19,26 +22,24 @@ def getDayDate(sourceFrame, sourceColumn, dateFormat):
     return DAY_date
 
 
-# splits frame based on unique vals in columns
-def addIntIDUnique(sourceFrame, sourceColumn, idColumnName):
-    originalFrame = sourceFrame.copy()
+def addUniqueIntIdColumn(dataFrame, columnName, newColumn):
+    originalFrame = dataFrame.copy()
 
-    uniqueValues = originalFrame[sourceColumn].unique()
-
-    originalFrame[idColumnName] = pd.Series(dtype='Int32')
+    uniqueValues = originalFrame[columnName].unique()
+    originalFrame[newColumn] = pd.Series(dtype='Int32')
 
     newId = 0
 
     for value in uniqueValues:
-        condition = originalFrame[sourceColumn] == value
-
-        originalFrame.loc[condition, idColumnName] = newId
+        condition = originalFrame[columnName] == value
+        originalFrame.loc[condition, newColumn] = newId
 
         newId += 1
 
     return originalFrame
 
 
+# Adds an unorganised range of Ids of type int to a column
 def addIntID(sourceFrame, idColumnName):
     originalFrame = sourceFrame.copy()
 
@@ -48,7 +49,8 @@ def addIntID(sourceFrame, idColumnName):
     return originalFrame
 
 
-def splitFrames(sourceFrame, idColumnName, childColumns):
+# Splits a pandas DataFrame based on unique values in columns
+def splitDataFrame(sourceFrame, idColumnName, childColumns):
     originalFrame = sourceFrame.copy()
 
     selectedSplitColumns = [idColumnName]
@@ -66,54 +68,68 @@ def splitFrames(sourceFrame, idColumnName, childColumns):
     return [originalFrame, splitFrame]
 
 
-def mergeStarDiagrams(baseStarDiagram, addedStarDiagram, factFrameName, factFramePrimaryKey, idRegex):
+# methods concerning merging
+
+def mergeStarDiagrams(baseStarDiagram, addedStarDiagram, factFrameName, factFramePrimaryKey, factFrameNonLinkedIds,
+                      idRegex):
     resultFrame = baseStarDiagram.copy()
 
     baseFactFrame = next((df for df in resultFrame if df.name == factFrameName), None)
     addedFactFrame = next((df for df in addedStarDiagram if df.name == factFrameName), None)
 
     for baseTable, addTable in zip(baseStarDiagram, addedStarDiagram):
-
         tableName = addTable.name
 
+        # fixes ids for the connected dataframes
         if addTable.name != factFrameName:
             for column in addTable.columns:
                 if idRegex in column:
-                    createUniqueIDS(baseFactFrame, addedFactFrame, addTable, column)
+                    createUniqueLinkedIds(baseFactFrame, addedFactFrame, addTable, column)
 
+        # fixes ids for the factframe primary key for the table can just be from baseframe.max() till (len(toadd) + baseframe.max)
+        # columns that are not linked will get a unique id
         else:
             for column in addTable.columns:
                 if column == factFramePrimaryKey:
-                    createUniqueIDS2(baseFactFrame, addTable, column)
+                    createUniqueNonLinkedIds(baseFactFrame, addTable, column)
+                if column in factFrameNonLinkedIds:
+                    addTable = createUniqueIds(baseTable, column, addTable)
 
+        # merges dataframe
         baseTable = pd.concat([baseTable, addTable])
-
         baseTable.name = tableName
 
+        # adds merged dataframe to the resulting star diagram
         resultFrame = [baseTable if df.name == tableName else df for df in resultFrame]
 
     return resultFrame
 
+def createUniqueIds(baseFactFrame, column, dataFrame):
+    originalFrame = dataFrame.copy()
 
-# Creates a set of new ids for an ID column that is not linked to something, uses range to compare it to the frame it gets added to
-def createUniqueIDS2(baseFactFrame, frameToFix, column):
-    newIDValue = 0
+    uniqueValues = originalFrame[column].unique()
+    newId = getMaxIdValue(baseFactFrame, column)
 
-    if not (pd.isna(baseFactFrame[column].max())):
-        newIDValue = baseFactFrame[column].max()
-        newIDValue += 5000
+    for value in uniqueValues:
+        condition = originalFrame[column] == value
+        originalFrame.loc[condition, column] = newId
+
+        newId += 1
+
+    return originalFrame
+
+
+# Creates a set of new ids for an ID column that is not linked to something, range of ids starts at the max of the baseframe similair id column
+def createUniqueNonLinkedIds(baseFactFrame, frameToFix, column):
+    newIDValue = getMaxIdValue(baseFactFrame, column)
 
     id_list = range(newIDValue, (newIDValue + len(frameToFix)))
     frameToFix[column] = id_list
 
 
 # Creates new IDS and links to the factframe, doesnt change the id for -1 values because it assumes -1 is null from previous data cleaning
-def createUniqueIDS(baseFactFrame, addedFactFrame, frameToFix, column):
-    newIDValue = 0
-
-    if not (pd.isna(baseFactFrame[column].max())):
-        newIDValue = baseFactFrame[column].max()
-        newIDValue += 5000
+def createUniqueLinkedIds(baseFactFrame, addedFactFrame, frameToFix, column):
+    newIDValue = getMaxIdValue(baseFactFrame, column)
 
     for index, value in frameToFix[column].items():
 
@@ -127,16 +143,23 @@ def createUniqueIDS(baseFactFrame, addedFactFrame, frameToFix, column):
             newIDValue += 1
 
 
-def dupC(df):
+def getMaxIdValue(dataFrame, column):
+    newIDValue = 0
+
+    if dataFrame is not None:
+        if not (pd.isna(dataFrame[column].max())):
+            newIDValue = dataFrame[column].max()
+            newIDValue += 5000
+
+    return newIDValue
+
+
+def checkColumnForDuplicates(df, colomnRegex):
     for table in df:
         for column in table:
-            if '_id' in column:
+            if colomnRegex in column:
                 duplicate_count = table[column].duplicated().sum()
                 print(f'COLUMN: {column} HAS {duplicate_count} OF DUPLICATED VALUES')
-
-
-def constructConnectionString(driver, server, dbName, username, password, trustedConnection):
-    return f"DRIVER={driver};SERVER={server};DATABASE={dbName};UID={username};PWD={password};trusted_connection={trustedConnection}"
 
 
 def createEmptyStarFrame():

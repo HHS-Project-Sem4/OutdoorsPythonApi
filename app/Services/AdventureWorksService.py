@@ -1,13 +1,14 @@
 from app.Services.AbstractStarService import StarService
-from app.Tools import utils
 from app.Repositories.AdventureWorksRepository import AdventureRepository
+from app.Tools import DbUtil, EtlUtil
 
 
 class AdventureWorksService(StarService):
 
-    def __init__(self, server, username, password, driver, trustedConnection):
-        repository = AdventureRepository(
-            utils.constructConnectionString(driver, server, 'AdventureWorks', username, password, trustedConnection))
+    def __init__(self):
+        # ref used in the db config ini that contains the dbName
+        dbRef = 'AdventureWorks'
+        repository = AdventureRepository(DbUtil.constructConnectionString(dbRef))
 
         super().__init__(repository)
 
@@ -27,8 +28,7 @@ class AdventureWorksService(StarService):
                          'CUSTOMER_company_name']
         customerData.columns = renameColumns
 
-        # dropping duplicates on this column because of the one to many relationship with businessentity and businessEntityAddress, only other way is to just exclude the address etc data
-        customerData.drop_duplicates(subset=['CUSTOMER_id'])
+        customerData.drop_duplicates(subset=['CUSTOMER_id'], keep="first", inplace=True)
 
         return customerData
 
@@ -47,7 +47,7 @@ class AdventureWorksService(StarService):
         orderDates = self.repository.getDayDataFrame()
 
         dateFormat = '%Y-%m-%d'
-        DAY_date = utils.getDayDate(orderDates, 'OrderDate', dateFormat)
+        DAY_date = EtlUtil.createDayDateDataframe(orderDates, 'OrderDate', dateFormat)
 
         return DAY_date
 

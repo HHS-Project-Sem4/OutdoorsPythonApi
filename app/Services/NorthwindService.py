@@ -1,13 +1,15 @@
 from app.Services.AbstractStarService import StarService
-from app.Tools import utils
 from app.Repositories.NorthwindRepository import NorthwindRepository
+from app.Tools import DbUtil, EtlUtil
 
 
 class NorthwindService(StarService):
 
-    def __init__(self, server, username, password, driver, trustedConnection):
-        repository = NorthwindRepository(
-            utils.constructConnectionString(driver, server, 'Northwind', username, password, trustedConnection))
+    def __init__(self):
+        # ref used in the db config ini that contains the dbName
+        dbRef = 'Northwind'
+
+        repository = NorthwindRepository(DbUtil.constructConnectionString(dbRef))
 
         super().__init__(repository)
 
@@ -40,14 +42,14 @@ class NorthwindService(StarService):
         orderDates = self.repository.getDayDataFrame()
 
         dateFormat = '%Y-%m-%d'
-        DAY_date = utils.getDayDate(orderDates, 'OrderDate', dateFormat)
+        DAY_date = EtlUtil.createDayDateDataframe(orderDates, 'OrderDate', dateFormat)
 
         return DAY_date
 
     def getOrderDetailsDataFrame(self):
         orderDetailsData = self.repository.getOrderDetailsDataFrame()
 
-        orderDetailsData = utils.addIntID(orderDetailsData, 'OrderID')
+        orderDetailsData = EtlUtil.addIntID(orderDetailsData, 'OrderID')
 
         renameColumns = ['ORDER_DETAIL_id',
                          'ORDER_HEADER_id', 'ORDER_DETAIL_order_quantity', 'ORDER_DETAIL_unit_price', 'DAY_date',
