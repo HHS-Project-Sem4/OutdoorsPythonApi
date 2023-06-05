@@ -2,6 +2,7 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
 
+
 class Repository:
     def __init__(self, connectionString):
         connection_url = URL.create("mssql+pyodbc", query={"odbc_connect": connectionString})

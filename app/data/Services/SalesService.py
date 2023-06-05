@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
-from app.Services.AbstractStarService import StarService
+from app.data.Services.AbstractStarService import StarService
 from app.Tools import EtlUtil
-from app.Repositories.CrudRepository import Repository
+from app.data.Repositories.CrudRepository import Repository
 from app.Tools import DbUtil
 
 
@@ -66,16 +66,19 @@ class SalesService(StarService):
         orderDetailsData.insert(0, 'OrderID', np.nan)
         orderDetailsData = EtlUtil.addIntID(orderDetailsData, 'OrderID')
 
-        # selectedColumn = ['Order_Quantity', 'Unit_Price', 'Date', 'CUSTOMER_id', 'prod_id']
-        selectedColumn = ['OrderID', 'Order_Quantity', 'Unit_Price', 'Date', 'prod_id']
+        orderDetailsData.insert(0, 'OrderHeader', np.nan)
+        orderDetailsData = EtlUtil.addIntID(orderDetailsData, 'OrderHeader')
 
+        selectedColumn = ['OrderID', 'OrderHeader', 'Order_Quantity', 'Unit_Price', 'Date', 'prod_id']
         orderDetailsData = orderDetailsData[selectedColumn]
 
-        # renameColumns = ['ORDER_DETAIL_order_quantity', 'ORDER_DETAIL_unit_price', 'DAY_date', 'CUSTOMER_id', 'PRODUCT_id']
-
-        renameColumns = ['ORDER_DETAIL_id', 'ORDER_DETAIL_order_quantity', 'ORDER_DETAIL_unit_price', 'DAY_date',
+        renameColumns = ['ORDER_DETAIL_id', 'ORDER_HEADER_id', 'ORDER_DETAIL_order_quantity', 'ORDER_DETAIL_unit_price',
+                         'DAY_date',
                          'PRODUCT_id']
 
         orderDetailsData.columns = renameColumns
+
+        dateFormat = '%Y-%m-%d'
+        orderDetailsData['DAY_date'] = pd.to_datetime(orderDetailsData['DAY_date'], format=dateFormat)
 
         return orderDetailsData

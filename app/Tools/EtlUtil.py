@@ -161,6 +161,12 @@ def checkColumnForDuplicates(df, colomnRegex):
                 duplicate_count = table[column].duplicated().sum()
                 print(f'COLUMN: {column} HAS {duplicate_count} OF DUPLICATED VALUES')
 
+def checkForNulls(df):
+    for column in df.columns:
+        nullCount = df[column].isnull().sum()
+
+        print(f'COLUMN {column} HAS: {nullCount} NULL VALUES')
+
 
 def createEmptyStarFrame():
     column_data = [

@@ -1,13 +1,13 @@
-from app.Services.AENCService import AENCService
-from app.Services.AdventureWorksService import AdventureWorksService
-from app.Services.ETLService import ETLService
-from app.Services.NorthwindService import NorthwindService
-from app.Services.SalesService import SalesService
+from app.data.Services.AENCService import AENCService
+from app.data.Services.AdventureWorksService import AdventureWorksService
+from app.data.Services.ETLService import ETLService
+from app.data.Services.NorthwindService import NorthwindService
+from app.data.Services.SalesService import SalesService
 
 
 class Updater:
 
-    async def updateStar(self):
+    def updateStar(self):
         etlService = ETLService()
 
         northWindService = NorthwindService()
@@ -23,3 +23,7 @@ class Updater:
         ]
 
         etlService.updateStar(dataSets)
+
+
+u = Updater()
+u.updateStar()

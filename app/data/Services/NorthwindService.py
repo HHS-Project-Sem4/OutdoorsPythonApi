@@ -1,5 +1,7 @@
-from app.Services.AbstractStarService import StarService
-from app.Repositories.NorthwindRepository import NorthwindRepository
+import pandas as pd
+
+from app.data.Services.AbstractStarService import StarService
+from app.data.Repositories.NorthwindRepository import NorthwindRepository
 from app.Tools import DbUtil, EtlUtil
 
 
@@ -55,5 +57,8 @@ class NorthwindService(StarService):
                          'ORDER_HEADER_id', 'ORDER_DETAIL_order_quantity', 'ORDER_DETAIL_unit_price', 'DAY_date',
                          'EMPLOYEE_id', 'CUSTOMER_id', 'PRODUCT_id']
         orderDetailsData.columns = renameColumns
+
+        dateFormat = '%Y-%m-%d'
+        orderDetailsData['DAY_date'] = pd.to_datetime(orderDetailsData['DAY_date'], format=dateFormat)
 
         return orderDetailsData

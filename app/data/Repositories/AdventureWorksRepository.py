@@ -1,5 +1,5 @@
 import pandas as pd
-from app.Repositories.CrudRepository import Repository
+from app.data.Repositories.CrudRepository import Repository
 
 
 class AdventureRepository(Repository):

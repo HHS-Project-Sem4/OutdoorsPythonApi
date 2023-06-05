@@ -1,7 +1,3 @@
-from app.Repositories.CrudRepository import Repository
-import app.Tools.DbUtil as dbTool
-
-
 class CrudService:
 
     def __init__(self, repository):
@@ -11,7 +7,10 @@ class CrudService:
         self.repository.saveDateFrame(dataFrame, table)
 
     def deleteAll(self, table):
-        self.repository.dropTable(table)
+        try:
+            self.repository.dropTable(table)
+        except:
+            print('Something went wrong while dropping table, either table is not present or something else')
 
     def getRepository(self):
         return self.repository
