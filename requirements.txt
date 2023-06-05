@@ -7,3 +7,5 @@ uvicorn
 pyodbc
 
 numpy~=1.24.3
+
+torch~=1.8.1

@@ -1,6 +1,6 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 
-from app.Updater import Updater
+from app.data.Updater import Updater
 
 app = FastAPI()
 

@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from app.Services.CrudService import CrudService
+from app.data.Services.CrudService import CrudService
 
 
 # idk how abstract classes work in python tbh

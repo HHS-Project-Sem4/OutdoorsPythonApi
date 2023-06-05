@@ -1,6 +1,8 @@
-from app.Services.AbstractStarService import StarService
+import pandas as pd
+
+from app.data.Services.AbstractStarService import StarService
 from app.Tools import EtlUtil
-from app.Repositories.AENCRepository import AENCRepository
+from app.data.Repositories.AENCRepository import AENCRepository
 from app.Tools import DbUtil
 
 class AENCService(StarService):
@@ -59,5 +61,8 @@ class AENCService(StarService):
         renameColumns = ['ORDER_DETAIL_id', 'ORDER_HEADER_id', 'CUSTOMER_id', 'DAY_date', 'EMPLOYEE_id', 'PRODUCT_id',
                          'ORDER_DETAIL_unit_price', 'ORDER_DETAIL_order_quantity']
         orderDetailsData.columns = renameColumns
+
+        dateFormat = '%Y-%m-%d %H:%M:%S.%f'
+        orderDetailsData['DAY_date'] = pd.to_datetime(orderDetailsData['DAY_date'], format=dateFormat)
 
         return orderDetailsData

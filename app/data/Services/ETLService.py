@@ -1,6 +1,8 @@
-from app.Services.CrudService import CrudService
+import pandas as pd
+from app.Tools import CleaningUtil as cleaningUtil
+from app.data.Services.CrudService import CrudService
 from app.Tools import EtlUtil
-from app.Repositories.CrudRepository import Repository
+from app.data.Repositories.CrudRepository import Repository
 from app.Tools import DbUtil
 
 
@@ -35,7 +37,8 @@ class ETLService(CrudService):
         factFrameNonLinkedIds = ['ORDER_HEADER_id']
         idRegex = '_id'
 
-        returnSet = EtlUtil.mergeStarDiagrams(returnSet, toAdd, factFrameName, factFramePrimaryKey, factFrameNonLinkedIds, idRegex)
+        returnSet = EtlUtil.mergeStarDiagrams(returnSet, toAdd, factFrameName, factFramePrimaryKey,
+                                              factFrameNonLinkedIds, idRegex)
 
         return returnSet
 
@@ -55,13 +58,44 @@ class ETLService(CrudService):
 
         return mainData
 
+    def cleanTables(self, mainData):
+
+        print('CHECK NULL VALS BEFORE')
+        for table in mainData:
+            tableName = table.name
+            print(f'CHECK: {tableName}')
+
+            EtlUtil.checkForNulls(table)
+
+        cleanCustomerData = cleaningUtil.CleanCustomer(
+            next((df for df in mainData if df.name == 'Customer'), None))
+        cleanProductData = cleaningUtil.cleanProduct(
+            next((df for df in mainData if df.name == 'Product'), None))
+        cleanEmployeeData = cleaningUtil.cleanEmployee(
+            next((df for df in mainData if df.name == 'Employee'), None))
+        cleanOrderDetailsData = cleaningUtil.cleanOrderDetails(
+            next((df for df in mainData if df.name == 'Order_Details'), None))
+        cleanDayDate = cleaningUtil.cleanDayDate(
+            next((df for df in mainData if df.name == 'Order_Date'), None))
+
+        data = [cleanCustomerData, cleanProductData, cleanEmployeeData, cleanOrderDetailsData, cleanDayDate]
+
+        print('CHECK NULL VALS AFTER')
+        for table in data:
+            tableName = table.name
+            print(f'CHECK: {tableName}')
+
+            EtlUtil.checkForNulls(table)
+
+        return data
+
     def getUpdatedStar(self, dataSets):
         # creating the save frame
         print('CREATING NEW FRAME')
         mainData = EtlUtil.createEmptyStarFrame()
 
         self.dropAllTables(mainData)
-        print('TABLES CLEANED')
+        print('TABLES CLEARED')
 
         # Start the merger
         print('START MERGING')
@@ -75,26 +109,18 @@ class ETLService(CrudService):
         print('FIX DATE TABLE')
         mainData = self.dropDuplicateDates(mainData, 'Order_Date', 'DAY_date')
 
+        mainData = self.cleanTables(mainData)
+        print('TABLES CLEANED')
+
         return mainData
 
     def updateStar(self, dataSets):
         mainData = self.getUpdatedStar(dataSets)
 
-        # Make the uploading use virtual threads to increase the speed
         print('UPLOADING DATA')
         for table in mainData:
             tableName = table.name
             print(f'UPLOADING: {tableName}')
-
-            for column in table.columns:
-                if '_id' in column:
-                    # have to cast to string first otherwise get: Cannot cast array data from dtype('O') to dtype('int32') according to the rule 'safe'
-
-                    types = {column: 'string'}
-                    table = table.astype(types)
-
-                    types = {column: 'Int32'}
-                    table = table.astype(types)
 
             self.saveData(table, tableName)
 

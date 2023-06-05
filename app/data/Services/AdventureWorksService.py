@@ -1,5 +1,7 @@
-from app.Services.AbstractStarService import StarService
-from app.Repositories.AdventureWorksRepository import AdventureRepository
+import pandas as pd
+
+from app.data.Services.AbstractStarService import StarService
+from app.data.Repositories.AdventureWorksRepository import AdventureRepository
 from app.Tools import DbUtil, EtlUtil
 
 
@@ -59,6 +61,9 @@ class AdventureWorksService(StarService):
                          'EMPLOYEE_id', 'CUSTOMER_id', 'PRODUCT_id']
 
         orderDetailsData.columns = renameColumns
+
+        dateFormat = '%Y-%m-%d'
+        orderDetailsData['DAY_date'] = pd.to_datetime(orderDetailsData['DAY_date'], format=dateFormat)
 
         return orderDetailsData
 
