@@ -25,7 +25,7 @@ mergedData = pd.merge(mergedData, dayDate, on='DAY_date')
 
 # Select relevant columns
 selectedColumns = ['CUSTOMER_country', 'PRODUCT_name', 'PRODUCT_category', 'PRODUCT_sub_category',
-                   'ORDER_DETAIL_unit_price', 'DAY_QUARTER_nr', 'DAY_MONTH_nr', 'DAY_date']
+                   'ORDER_DETAIL_unit_price', 'DAY_QUARTER_nr', 'DAY_MONTH_nr']
 selectedData = mergedData[selectedColumns]
 
 selectedData = selectedData.dropna()
@@ -39,8 +39,8 @@ encodedData = pd.get_dummies(selectedData)
 X = encodedData.drop('ORDER_DETAIL_unit_price', axis=1)
 Y = encodedData['ORDER_DETAIL_unit_price']
 
-X = X.to_numpy()
-Y = Y.to_numpy()
+X = torch.from_numpy(X.to_numpy())
+Y = torch.from_numpy(Y.to_numpy())
 
 # Create training set
 randomState = 42
