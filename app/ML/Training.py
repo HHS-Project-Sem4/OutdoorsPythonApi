@@ -74,6 +74,7 @@ dataset = TestSet(X_train, y_train)
 train_loader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(device)
 model = NeuralNet(input_size, hidden_size, output_size).to(device)
 
 criterion = nn.MSELoss()

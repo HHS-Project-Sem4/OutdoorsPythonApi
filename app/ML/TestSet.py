@@ -1,7 +1,9 @@
+import numpy as np
 import torch
 import pandas as pd
 from Model import NeuralNet
 from UnitPriceData import Data
+import tensorflow as tf
 
 # Load the saved model
 saved_data = torch.load("data.pth")
@@ -40,10 +42,15 @@ X, Y = d.getXYTensor()
 
 # Reorder the columns to match the model's input order
 encoded_data = encoded_data.reindex(columns=X.columns, fill_value=0)
-encoded_data = pd.get_dummies(encoded_data)
+print(encoded_data)
 
-# Convert the preprocessed data to tensors
-mock_data_tensor = torch.tensor(encoded_data.values, dtype=torch.float32)
+# Convert pandas DataFrame to NumPy array
+numpy_array = encoded_data.values
+
+numpy_array = numpy_array.astype(np.float32)
+
+# Convert NumPy array to PyTorch tensor
+mock_data_tensor = torch.from_numpy(numpy_array)
 
 # Make predictions
 model.eval()  # Set the model to evaluation mode
