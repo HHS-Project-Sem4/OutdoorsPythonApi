@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import pandas as pd
 from Model import NeuralNet
-from UnitPriceData import Data
+import UnitPriceData
 
 class TestData:
 
@@ -20,8 +20,7 @@ class TestData:
         self.model.load_state_dict(model_state)
 
         # Dataset columns
-        data = Data()
-        X, Y = data.getXYTensor()
+        X, Y = UnitPriceData.getXYTensor()
 
         self.XColumns = X.columns
 

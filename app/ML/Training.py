@@ -1,5 +1,5 @@
-from app.data.Repositories.CrudRepository import Repository
-from app.Tools import DbUtil as dbUtil
+import CrudRepository
+import DbUtil
 import pandas as pd
 import torch
 import torch.nn as nn
@@ -8,14 +8,14 @@ from sklearn.model_selection import train_test_split
 from Model import NeuralNet
 
 # Get data
-connectionString = dbUtil.constructConnectionString('OutdoorFusion')
-dataRepository = Repository(connectionString)
+connectionString = DbUtil.constructConnectionString('OutdoorFusion')
+dataRepository = CrudRepository.findAll(connectionString, 'Order_Details')
 
-order_details = dataRepository.findAll('Order_Details')
-product = dataRepository.findAll('Product')
-customer = dataRepository.findAll('Customer')
-employee = dataRepository.findAll('Employee')
-dayDate = dataRepository.findAll('Order_Date')
+order_details = CrudRepository.findAll(connectionString, 'Order_Details')
+product = CrudRepository.findAll(connectionString, 'Product')
+customer = CrudRepository.findAll(connectionString, 'Customer')
+employee = CrudRepository.findAll(connectionString, 'Employee')
+dayDate = CrudRepository.findAll(connectionString, 'Order_Date')
 
 # Merge Data
 mergedData = pd.merge(order_details, product, on='PRODUCT_id')

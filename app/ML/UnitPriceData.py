@@ -1,42 +1,38 @@
-from app.data.Repositories.CrudRepository import Repository
-from app.Tools import DbUtil as dbUtil
+import CrudRepository
+import DbUtil
 import pandas as pd
-import torch
 
+def getXYTensor(self):
+    # Get data
+    connectionString = DbUtil.constructConnectionString('OutdoorFusion')
+    dataRepository = CrudRepository.findAll(connectionString, 'Order_Details')
 
-class Data:
+    order_details = CrudRepository.findAll(connectionString, 'Order_Details')
+    product = CrudRepository.findAll(connectionString, 'Product')
+    customer = CrudRepository.findAll(connectionString, 'Customer')
+    employee = CrudRepository.findAll(connectionString, 'Employee')
+    dayDate = CrudRepository.findAll(connectionString, 'Order_Date')
 
-    def getXYTensor(self):
-        # Get data
-        connectionString = dbUtil.constructConnectionString('OutdoorFusion')
-        dataRepository = Repository(connectionString)
+    # Merge Data
+    mergedData = pd.merge(order_details, product, on='PRODUCT_id')
+    mergedData = pd.merge(mergedData, customer, on='CUSTOMER_id')
+    mergedData = pd.merge(mergedData, employee, on='EMPLOYEE_id')
+    mergedData = pd.merge(mergedData, dayDate, on='DAY_date')
 
-        order_details = dataRepository.findAll('Order_Details')
-        product = dataRepository.findAll('Product')
-        customer = dataRepository.findAll('Customer')
-        employee = dataRepository.findAll('Employee')
-        dayDate = dataRepository.findAll('Order_Date')
+    # Select relevant columns
+    selectedColumns = ['CUSTOMER_country', 'PRODUCT_name', 'PRODUCT_category', 'PRODUCT_sub_category',
+                       'ORDER_DETAIL_unit_price', 'DAY_QUARTER_nr', 'DAY_MONTH_nr']
+    selectedData = mergedData[selectedColumns]
 
-        # Merge Data
-        mergedData = pd.merge(order_details, product, on='PRODUCT_id')
-        mergedData = pd.merge(mergedData, customer, on='CUSTOMER_id')
-        mergedData = pd.merge(mergedData, employee, on='EMPLOYEE_id')
-        mergedData = pd.merge(mergedData, dayDate, on='DAY_date')
+    selectedData = selectedData.dropna()
 
-        # Select relevant columns
-        selectedColumns = ['CUSTOMER_country', 'PRODUCT_name', 'PRODUCT_category', 'PRODUCT_sub_category',
-                           'ORDER_DETAIL_unit_price', 'DAY_QUARTER_nr', 'DAY_MONTH_nr']
-        selectedData = mergedData[selectedColumns]
+    # Encode date into numeric values
+    typeFix = {'DAY_QUARTER_nr': 'string', 'DAY_MONTH_nr': 'string'}
+    selectedData = selectedData.astype(typeFix)
 
-        selectedData = selectedData.dropna()
+    encodedData = pd.get_dummies(selectedData)
 
-        # Encode date into numeric values
-        typeFix = {'DAY_QUARTER_nr': 'string', 'DAY_MONTH_nr': 'string'}
-        selectedData = selectedData.astype(typeFix)
+    X = encodedData.drop('ORDER_DETAIL_unit_price', axis=1)
+    Y = encodedData['ORDER_DETAIL_unit_price']
 
-        encodedData = pd.get_dummies(selectedData)
-
-        X = encodedData.drop('ORDER_DETAIL_unit_price', axis=1)
-        Y = encodedData['ORDER_DETAIL_unit_price']
-
-        return X, Y
+    return X, Y

@@ -1,16 +1,16 @@
-from app.data.Repositories.CrudRepository import Repository
-from app.Tools import DbUtil as dbUtil
 import pandas as pd
-import torch
+import DbUtil
+import CrudRepository
 
-connectionString = dbUtil.constructConnectionString('OutdoorFusion')
-dataRepository = Repository(connectionString)
+# Get data
+connectionString = DbUtil.constructConnectionString('OutdoorFusion')
+dataRepository = CrudRepository.findAll(connectionString, 'Order_Details')
 
-order_details = dataRepository.findAll('Order_Details')
-product = dataRepository.findAll('Product')
-customer = dataRepository.findAll('Customer')
-employee = dataRepository.findAll('Employee')
-dayDate = dataRepository.findAll('Order_Date')
+order_details = CrudRepository.findAll(connectionString, 'Order_Details')
+product = CrudRepository.findAll(connectionString, 'Product')
+customer = CrudRepository.findAll(connectionString, 'Customer')
+employee = CrudRepository.findAll(connectionString, 'Employee')
+dayDate = CrudRepository.findAll(connectionString, 'Order_Date')
 
 mergedData = pd.merge(order_details, product, on='PRODUCT_id')
 mergedData = pd.merge(mergedData, customer, on='CUSTOMER_id')
