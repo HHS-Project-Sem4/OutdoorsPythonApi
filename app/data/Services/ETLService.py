@@ -58,32 +58,32 @@ class ETLService(CrudService):
         return mainData
 
     def cleanTables(self, mainData):
+        cleaning_functions = {
+            'Customer': cleaningUtil.CleanCustomer,
+            'Product': cleaningUtil.cleanProduct,
+            'Employee': cleaningUtil.cleanEmployee,
+            'Order_Details': cleaningUtil.cleanOrderDetails,
+            'Order_Date': cleaningUtil.cleanDayDate
+        }
+
+        data = []
 
         print('CHECK NULL VALS BEFORE')
         for table in mainData:
+
             tableName = table.name
             print(f'CHECK: {tableName}')
-
             EtlUtil.checkForNulls(table)
 
-        cleanCustomerData = cleaningUtil.CleanCustomer(
-            next((df for df in mainData if df.name == 'Customer'), None))
-        cleanProductData = cleaningUtil.cleanProduct(
-            next((df for df in mainData if df.name == 'Product'), None))
-        cleanEmployeeData = cleaningUtil.cleanEmployee(
-            next((df for df in mainData if df.name == 'Employee'), None))
-        cleanOrderDetailsData = cleaningUtil.cleanOrderDetails(
-            next((df for df in mainData if df.name == 'Order_Details'), None))
-        cleanDayDate = cleaningUtil.cleanDayDate(
-            next((df for df in mainData if df.name == 'Order_Date'), None))
-
-        data = [cleanCustomerData, cleanProductData, cleanEmployeeData, cleanOrderDetailsData, cleanDayDate]
+            if tableName in cleaning_functions:
+                cleaning_function = cleaning_functions[tableName]
+                cleaned_table = cleaning_function(table)
+                data.append(cleaned_table)
 
         print('CHECK NULL VALS AFTER')
         for table in data:
             tableName = table.name
             print(f'CHECK: {tableName}')
-
             EtlUtil.checkForNulls(table)
 
         return data
