@@ -30,7 +30,7 @@ class Predictor:
     #     "DAY_QUARTER_nr": ["1"],
     #     "DAY_MONTH_nr": ["1"],
     # }
-    def predict(self, data, predictedValueName):
+    async def predict(self, data, predictedValueName):
         dataFrame = pd.DataFrame(data)
 
         dataTensor = self.prepareValue(dataFrame)

@@ -54,7 +54,7 @@ async def getUnitPricePrediction(input: dict):
           "SubCategory": input.get("SubCategory")
     }
     values = datasets.getMonthValues(values)
-    predictedValue = predictor.predict(values, 'Predicted_Price')
+    predictedValue = await predictor.predict(values, 'Predicted_Price')
 
     return predictedValue.to_json(orient='records', index=False)
 
@@ -84,7 +84,7 @@ async def getOrderQuantiyPrediction(input: dict):
           "SubCategory": input.get("SubCategory")
     }
     values = datasets.getMonthValues(values)
-    predictedValue = predictor.predict(values, 'Predicted_Quantity')
+    predictedValue = await predictor.predict(values, 'Predicted_Quantity')
 
     return predictedValue.to_json(orient='records' , index=False)
 
@@ -93,11 +93,11 @@ async def getOrderQuantiyPrediction(input: dict):
 async def buildTrainingOrderQuantity():
     print('TRAIN ORDER QUANTITY')
 
-    trainer.createOrderQuantityDataset()
+    await trainer.createOrderQuantityDataset()
 
 
 @app.post("/train/unitprice")
 async def buildTrainingUnitPrice():
     print('TRAIN UNIT PRICE')
 
-    trainer.createUnitPriceDataset()
+    await trainer.createUnitPriceDataset()
