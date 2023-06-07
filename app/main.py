@@ -22,7 +22,13 @@ async def root():
 async def root():
     return {"message": "Hello World!"}
 
-
+# Input format below
+# inputValues = {
+#     'Country' : 'UK',
+#     'Product' : 'LL Road Pedal',
+#     'Category' : 'Components',
+#     'SubCategory' : 'Pedals',
+# }
 @app.get("/predict/unitprice")
 async def getUnitPricePrediction(inputValues):
     path = 'unitprice_data.pth'
@@ -32,11 +38,18 @@ async def getUnitPricePrediction(inputValues):
 
     predictor = Predictor(path, X.columns)
 
-    predictedValue = predictor.predict(inputValues, 'Predicted_Price')
+    values = datasets.getMonthValues(inputValues)
+    predictedValue = predictor.predict(values, 'Predicted_Price')
 
     return predictedValue
 
-
+# Input format below
+# inputValues = {
+#     'Country' : 'UK',
+#     'Product' : 'LL Road Pedal',
+#     'Category' : 'Components',
+#     'SubCategory' : 'Pedals',
+# }
 @app.get("/predict/orderquantity")
 async def getOrderQuantiyPrediction(inputValues):
     path = 'orderquantity_data.pth'
@@ -46,7 +59,8 @@ async def getOrderQuantiyPrediction(inputValues):
 
     predictor = Predictor(path, X.columns)
 
-    predictedValue = predictor.predict(inputValues, 'Predicted_Quantity')
+    values = datasets.getMonthValues(inputValues)
+    predictedValue = predictor.predict(values, 'Predicted_Quantity')
 
     return predictedValue
 

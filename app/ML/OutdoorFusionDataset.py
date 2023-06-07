@@ -62,3 +62,31 @@ class Data:
         encodedData = pd.get_dummies(selectedData)
 
         return encodedData
+
+    def getMonthValues(self, inputValues):
+
+        country = inputValues['Country']
+        product = inputValues['Product']
+        category = inputValues['Category']
+        subCategory = inputValues['SubCategory']
+
+        mock_data = {
+            "CUSTOMER_country": [],
+            "PRODUCT_name": [],
+            "PRODUCT_category": [],
+            "PRODUCT_sub_category": [],
+            "DAY_QUARTER_nr": [],
+            "DAY_MONTH_nr": [],
+        }
+
+        for i in range(1, 13):
+            q = (i - 1) // 3 + 1
+
+            mock_data["CUSTOMER_country"].append(country)
+            mock_data["PRODUCT_name"].append(product)
+            mock_data["PRODUCT_category"].append(category)
+            mock_data["PRODUCT_sub_category"].append(subCategory)
+            mock_data["DAY_MONTH_nr"].append(i)
+            mock_data["DAY_QUARTER_nr"].append(q)
+
+        return mock_data
