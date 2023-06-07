@@ -104,7 +104,8 @@ def createOrderQuantityDataset():
     trainer.train()
     data = trainer.getTrainedData()
 
-    FILE = "orderquantity_data.pth"
+    FILE = "app/Resources/Datasets/orderquantity_data.pth"
+
     torch.save(data, FILE)
 
     print(f"Training complete. File saved to {FILE}")
@@ -119,7 +120,7 @@ def createUnitPriceDataset():
     trainer.train()
     data = trainer.getTrainedData()
 
-    FILE = "unitprice_data.pth"
+    FILE = "app/Resources/Datasets/unitprice_data.pth"
     torch.save(data, FILE)
 
     print(f"Training complete. File saved to {FILE}")

@@ -1,9 +1,8 @@
-import asyncio
-
 from fastapi import FastAPI, HTTPException, BackgroundTasks
-from app.ML.DataPredict import Predictor
-from app.Data.Updater import Updater
+
 import app.ML.Trainer as trainer
+from app.Data.Updater import Updater
+from app.ML.DataPredict import Predictor
 from app.ML.OutdoorFusionDataset import Data
 
 app = FastAPI()
@@ -11,7 +10,7 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World3"}
+    return {"message": "Hello World"}
 
 
 @app.get("/hello/{name}")
@@ -47,10 +46,10 @@ async def updateStarScheme():
 # }
 @app.post("/predict/unitprice")
 async def getUnitPricePrediction(input: dict):
-    path = 'app/ML/unitprice_data.pth'
+    path = 'app/Resources/Datasets/unitprice_data.pth'
 
     datasets = Data()
-    X, Y = datasets.getOrderQuantityXY()
+    X, Y = datasets.getUnitPriceXY()
 
     predictor = Predictor(path, X.columns)
 
@@ -61,23 +60,24 @@ async def getUnitPricePrediction(input: dict):
         "SubCategory": input.get("SubCategory")
     }
     values = datasets.getMonthValues(values)
-    predictedValue = await predictor.predict(values, 'Predicted_Price')
+    predictColumn  = 'Predicted_Quantity'
 
-    return predictedValue.to_json(orient='records', index=False)
+    predictedValue = await predictor.predict(values, predictColumn)
+    returnArray = predictedValue[['DAY_MONTH_nr', predictColumn]]
+
+    return returnArray.to_numpy()
 
 
 # Input format below
 # {
-#   "Country": "UK",
-#   "Product": "LL Road Pedal",
-#   "Category": "Components",
-#   "SubCategory": "Pedals"
+#     "Country": "UK",
+#     "Product": "LL Road Pedal",
+#     "Category": "Components",
+#     "SubCategory": "Pedals"
 # }
 @app.post("/predict/orderquantity")
 async def getOrderQuantiyPrediction(input: dict):
-    print(input)
-
-    path = 'app/ML/orderquantity_data.pth'
+    path = 'app/Resources/Datasets/orderquantity_data.pth'
 
     datasets = Data()
     X, Y = datasets.getOrderQuantityXY()
@@ -90,10 +90,15 @@ async def getOrderQuantiyPrediction(input: dict):
         "Category": input.get("Category"),
         "SubCategory": input.get("SubCategory")
     }
-    values = datasets.getMonthValues(values)
-    predictedValue = await predictor.predict(values, 'Predicted_Quantity')
 
-    return predictedValue.to_json(orient='records', index=False)
+    values = datasets.getMonthValues(values)
+
+    predictColumn = 'Predicted_Quantity'
+    predictedValue = await predictor.predict(values, predictColumn)
+
+    returnArray = predictedValue[['DAY_MONTH_nr', predictColumn]]
+
+    return returnArray.to_numpy()
 
 
 async def create_order_quantity_dataset():
@@ -104,7 +109,7 @@ async def create_order_quantity_dataset():
     print('Order quantity dataset creation complete')
 
 
-@app.post("/build-training-order-quantity")
+@app.post("/train/orderQuantity")
 async def build_training_order_quantity(background_tasks: BackgroundTasks):
     print('TRAIN ORDER QUANTITY')
 
@@ -115,14 +120,14 @@ async def build_training_order_quantity(background_tasks: BackgroundTasks):
 
 async def createUnitPricedataset():
     # Your logic for creating the order quantity dataset
-    print('Creating order quantity dataset...')
+    print('Creating unit price dataset...')
     # Simulating a long-running task
     trainer.createUnitPriceDataset()
     print('Order quantity dataset creation complete')
 
 
 @app.post("/train/unitprice")
-async def buildTrainingUnitPrice(background_tasks: BackgroundTasks):
+async def build_Training_Unit_Price(background_tasks: BackgroundTasks):
     print('TRAIN ORDER QUANTITY')
 
     background_tasks.add_task(createUnitPricedataset)
