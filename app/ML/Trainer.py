@@ -3,8 +3,8 @@ import torch.nn as nn
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader
 
-from Model import NeuralNet
-from OutdoorFusionDataset import Data
+from app.ML.Model import NeuralNet
+from app.ML.OutdoorFusionDataset import Data
 
 
 class TestSet(Dataset):
@@ -122,7 +122,3 @@ def createUnitPriceDataset():
     torch.save(data, FILE)
 
     print(f"Training complete. File saved to {FILE}")
-
-
-# createUnitPriceDataset()
-# createOrderQuantityDataset()

@@ -7,6 +7,16 @@ from app.ML.OutdoorFusionDataset import Data
 app = FastAPI()
 
 
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+
+@app.get("/hello/{name}")
+async def say_hello(name: str):
+    return {"message": f"Hello {name}"}
+
+
 @app.get("/updateStar")
 async def root():
     try:
@@ -17,10 +27,6 @@ async def root():
     except:
         return {"message": "Update failed"}
 
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World!"}
 
 # Input format below
 # inputValues = {
@@ -42,6 +48,7 @@ async def getUnitPricePrediction(inputValues):
     predictedValue = predictor.predict(values, 'Predicted_Price')
 
     return predictedValue
+
 
 # Input format below
 # inputValues = {
