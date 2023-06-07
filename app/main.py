@@ -1,8 +1,11 @@
+import sys
+sys.path.append('./')
+
 from fastapi import FastAPI
-from app.ML.DataPredict import Predictor
-from app.Data.Updater import Updater
-import app.ML.Trainer as trainer
-from app.ML.OutdoorFusionDataset import Data
+from ML.DataPredict import Predictor
+from data.Updater import Updater
+import ML.Trainer as trainer
+from ML.OutdoorFusionDataset import Data
 
 app = FastAPI()
 
