@@ -28,7 +28,7 @@ jobs:
         with:
           registry: outdoor.azurecr.io
           username: outdoor
-          password: ${{ secrets.ACR_PASSWORD }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
       - name: Upload Docker container
         run: |
