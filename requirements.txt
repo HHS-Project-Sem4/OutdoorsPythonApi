@@ -6,10 +6,6 @@ azure-functions
 uvicorn
 pyodbc
 
-torch
-torchvision
-torchaudio
-
 numpy~=1.24.3
 
 scikit-learn~=1.2.2

@@ -1,6 +1,3 @@
-import pandas as pd
-
-
 def CleanCustomer(dataFrame):
     table = dataFrame.copy()
 

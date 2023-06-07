@@ -1,29 +1,102 @@
-name: Docker Build and Push
+#name: Docker Build and Push
+#
+#on:
+#  push:
+#    branches:
+#      - master
+#  workflow_dispatch:
+#
+#jobs:
+#  build-and-push:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+#
+#      - name: Login to Docker registry
+#        uses: docker/login-action@v1
+#        with:
+#          registry: outdoor.azurecr.io
+#          username: outdoor
+#          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+#
+#      - name: Build and push Docker image
+#        uses: docker/build-push-action@v2
+#        with:
+#          context: .
+#          push: true
+#          tags: outdoor.azurecr.io/outdoorapi:build-tag-1
+
+
+#name: Docker Build and Push
+#
+#on:
+#  push:
+#    branches:
+#      - master
+#  workflow_dispatch:
+#
+#jobs:
+#  build-and-push:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+#
+#      - name: Login to Docker registry
+#        uses: docker/login-action@v1
+#        with:
+#          registry: outdoor.azurecr.io
+#          username: outdoor
+#          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+#
+#      - name: Build and push Docker image
+#        uses: docker/build-push-action@v2
+#        with:
+#          context: .
+#          push: true
+#          tags: outdoor.azurecr.io/outdoorapi:build-tag-1
+
+
+name: Upload Docker Container to Azure Container Registry
 
 on:
   push:
     branches:
-      - master
-  workflow_dispatch:
+      - main
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Login to Docker registry
-        uses: docker/login-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build Docker image
+        run: docker build --file Dockerfile --tag myimage .
+
+      - name: Zip Docker container
+        run: zip -r myimage.zip .
+
+      - name: Log into Azure Container Registry
+        uses: azure/docker-login@v1
         with:
           registry: outdoor.azurecr.io
           username: outdoor
-          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+          password: ${{ secrets.ACR_PASSWORD }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          tags: outdoor.azurecr.io/outdoorapi:build-tag-1
+      - name: Upload Docker container
+        run: |
+          az acr import \
+            --name outdoor \
+            --source myimage.zip \
+            --image myimage:latest
+
+      - name: Unzip Docker container
+        run: unzip myimage.zip
