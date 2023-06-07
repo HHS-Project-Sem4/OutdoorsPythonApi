@@ -1,5 +1,8 @@
+import sys
+sys.path.append('../../')
+
 import pandas as pd
-from app.Data.Repositories.CrudRepository import Repository
+from data.Repositories.CrudRepository import Repository
 
 
 class NorthwindRepository(Repository):

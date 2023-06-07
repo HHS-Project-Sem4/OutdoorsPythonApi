@@ -1,9 +1,11 @@
-import pandas as pd
+import sys
+sys.path.append('../../')
 
-from app.Data.Services.AbstractStarService import StarService
-from app.Tools import EtlUtil
-from app.Data.Repositories.AENCRepository import AENCRepository
-from app.Tools import DbUtil
+import pandas as pd
+from data.Services.AbstractStarService import StarService
+from Tools import EtlUtil
+from data.Repositories.AENCRepository import AENCRepository
+from Tools import DbUtil
 
 class AENCService(StarService):
 

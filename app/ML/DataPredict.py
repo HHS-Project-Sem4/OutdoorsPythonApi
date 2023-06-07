@@ -1,7 +1,10 @@
+import sys
+sys.path.append('../')
+
 import numpy as np
 import torch
 import pandas as pd
-from app.ML.Model import NeuralNet
+from ML.Model import NeuralNet
 
 
 class Predictor:

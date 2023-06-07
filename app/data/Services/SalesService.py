@@ -1,9 +1,12 @@
+import sys
+sys.path.append('../../')
+
 import numpy as np
 import pandas as pd
-from app.Data.Services.AbstractStarService import StarService
-from app.Tools import EtlUtil
-from app.Data.Repositories.CrudRepository import Repository
-from app.Tools import DbUtil
+from data.Services.AbstractStarService import StarService
+from Tools import EtlUtil
+from data.Repositories.CrudRepository import Repository
+from Tools import DbUtil
 
 
 class SalesService(StarService):

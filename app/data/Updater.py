@@ -1,8 +1,11 @@
-from app.Data.Services.AENCService import AENCService
-from app.Data.Services.AdventureWorksService import AdventureWorksService
-from app.Data.Services.ETLService import ETLService
-from app.Data.Services.NorthwindService import NorthwindService
-from app.Data.Services.SalesService import SalesService
+import sys
+sys.path.append('../')
+
+from data.Services.AENCService import AENCService
+from data.Services.AdventureWorksService import AdventureWorksService
+from data.Services.ETLService import ETLService
+from data.Services.NorthwindService import NorthwindService
+from data.Services.SalesService import SalesService
 
 
 class Updater:

@@ -1,8 +1,11 @@
+import sys
+sys.path.append('../../')
+
 import pandas as pd
 
-from app.Data.Services.AbstractStarService import StarService
-from app.Data.Repositories.AdventureWorksRepository import AdventureRepository
-from app.Tools import DbUtil, EtlUtil
+from data.Services.AbstractStarService import StarService
+from data.Repositories.AdventureWorksRepository import AdventureRepository
+from Tools import DbUtil, EtlUtil
 
 
 class AdventureWorksService(StarService):

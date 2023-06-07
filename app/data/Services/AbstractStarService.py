@@ -1,6 +1,8 @@
+import sys
+sys.path.append('../../')
 from abc import abstractmethod
 
-from app.Data.Services.CrudService import CrudService
+from data.Services.CrudService import CrudService
 
 
 # idk how abstract classes work in python tbh
