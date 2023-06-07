@@ -27,4 +27,3 @@ jobs:
           context: .
           push: true
           tags: outdoor.azurecr.io/outdoorapi:build-tag-1
-
