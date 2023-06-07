@@ -5,7 +5,6 @@ class NeuralNet(nn.Module):
     def __init__(self, input_size, hidden_size, num_classes):
         super(NeuralNet, self).__init__()
 
-        print(f'INPUT SIZE {input_size}, HIDDEN SIZE {hidden_size}, NUM CLASS {num_classes}')
         self.l1 = nn.Linear(input_size, hidden_size)
         self.l2 = nn.Linear(hidden_size, hidden_size)
         self.l3 = nn.Linear(hidden_size, num_classes)
@@ -19,5 +18,4 @@ class NeuralNet(nn.Module):
         out = self.l3(out)
 
         # activation and softmax will be done later
-
         return out

@@ -21,6 +21,8 @@ class NorthwindService(StarService):
         newColumnNames = ['PRODUCT_id', 'PRODUCT_name', 'PRODUCT_sub_category']
         productData.columns = newColumnNames
 
+        productData['PRODUCT_category'] = 'Foodstuff'
+
         return productData
 
     def getCustomerDataFrame(self):

@@ -2,14 +2,14 @@ import numpy as np
 import torch
 import pandas as pd
 from Model import NeuralNet
-from UnitPriceData import Data
+from OutdoorFusionDataset import Data
 
-class TestData:
 
-    def __init__(self, data):
-        self.data = data
+class Predictor:
 
-        saved_data = torch.load("data.pth")
+    def __init__(self, path):
+        saved_data = torch.load(path)
+
         model_state = saved_data["model_state"]
         input_size = saved_data["input_size"]
         output_size = saved_data["output_size"]
@@ -19,12 +19,13 @@ class TestData:
         self.model = NeuralNet(input_size, hidden_size, output_size)
         self.model.load_state_dict(model_state)
 
-        # Dataset columns
+        # Dataset columns / maybe try to find other way to get x amount of columns
         data = Data()
         X, Y = data.getXYTensor()
 
         self.XColumns = X.columns
 
+    # data should be an object like below
     # mock_data = {
     #     "CUSTOMER_country": ["USA"],
     #     "PRODUCT_name": ["LL Crankset"],
@@ -33,9 +34,10 @@ class TestData:
     #     "DAY_QUARTER_nr": ["1"],
     #     "DAY_MONTH_nr": ["1"],
     # }
-    def predict(self, data):
-        mock_df = pd.DataFrame(data)
-        dataTensor = self.prepareValue(mock_df)
+    def predict(self, data, predictedValueName):
+        dataFrame = pd.DataFrame(data)
+
+        dataTensor = self.prepareValue(dataFrame)
 
         self.model.eval()  # Set the model to evaluation mode
 
@@ -46,7 +48,7 @@ class TestData:
         predictions_array = predictions.numpy()
 
         # Combine the input data with the predictions (if desired)
-        result_df = pd.concat([mock_df, pd.DataFrame(predictions_array, columns=["Predicted_price"])], axis=1)
+        result_df = pd.concat([dataFrame, pd.DataFrame(predictions_array, columns=[predictedValueName])], axis=1)
 
         return result_df
 

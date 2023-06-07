@@ -14,6 +14,15 @@ def CleanCustomer(dataFrame):
 
     table = table.astype(expectedTypes)
 
+    mapping_dict = {
+        'United States': 'USA',
+        'United Kingdom': 'UK',
+        'CAN': 'Canada'
+    }
+
+    # Replace the values in the 'country' column
+    table['CUSTOMER_country'] = table['CUSTOMER_country'].replace(mapping_dict)
+
     table.name = 'Customer'
     return table
 
@@ -30,6 +39,15 @@ def cleanEmployee(dataFrame):
                      'EMPLOYEE_country': 'string'}
 
     table = table.astype(expectedTypes)
+
+    mapping_dict = {
+        'United States': 'USA',
+        'United Kingdom': 'UK',
+        'CAN': 'Canada'
+    }
+
+    # Replace the values in the 'country' column
+    table['EMPLOYEE_country'] = table['EMPLOYEE_country'].replace(mapping_dict)
 
     table.name = 'Employee'
     return table
