@@ -46,7 +46,7 @@ async def updateStarScheme():
 # }
 @app.post("/predict/unitprice")
 async def getUnitPricePrediction(input: dict):
-    path = 'app/Resources/Datasets/unitprice_data.pth'
+    path = 'app/unitprice_data.pth'
 
     datasets = Data()
     X, Y = datasets.getUnitPriceXY()
@@ -77,7 +77,7 @@ async def getUnitPricePrediction(input: dict):
 # }
 @app.post("/predict/orderquantity")
 async def getOrderQuantiyPrediction(input: dict):
-    path = 'app/Resources/Datasets/orderquantity_data.pth'
+    path = 'app/orderquantity_data.pth'
 
     datasets = Data()
     X, Y = datasets.getOrderQuantityXY()
