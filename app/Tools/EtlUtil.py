@@ -127,7 +127,7 @@ def createUniqueNonLinkedIds(baseFactFrame, frameToFix, column):
     frameToFix[column] = id_list
 
 
-# Creates new IDS and links to the factframe, doesnt change the id for -1 values because it assumes -1 is null from previous data cleaning
+# Creates new IDS and links to the factframe, doesnt change the id for -1 values because it assumes -1 is null from previous Data cleaning
 def createUniqueLinkedIds(baseFactFrame, addedFactFrame, frameToFix, column):
     newIDValue = getMaxIdValue(baseFactFrame, column)
 

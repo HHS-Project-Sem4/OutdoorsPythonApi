@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
-from app.data.Services.AbstractStarService import StarService
+from app.Data.Services.AbstractStarService import StarService
 from app.Tools import EtlUtil
-from app.data.Repositories.CrudRepository import Repository
+from app.Data.Repositories.CrudRepository import Repository
 from app.Tools import DbUtil
 
 

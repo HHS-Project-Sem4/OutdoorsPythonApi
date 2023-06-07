@@ -1,7 +1,7 @@
 import pandas as pd
 
-from app.data.Services.AbstractStarService import StarService
-from app.data.Repositories.NorthwindRepository import NorthwindRepository
+from app.Data.Services.AbstractStarService import StarService
+from app.Data.Repositories.NorthwindRepository import NorthwindRepository
 from app.Tools import DbUtil, EtlUtil
 
 
@@ -20,6 +20,8 @@ class NorthwindService(StarService):
 
         newColumnNames = ['PRODUCT_id', 'PRODUCT_name', 'PRODUCT_sub_category']
         productData.columns = newColumnNames
+
+        productData['PRODUCT_category'] = 'Foodstuff'
 
         return productData
 
