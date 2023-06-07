@@ -1,9 +1,10 @@
 def constructConnectionString(dbRef):
     dbName = dbRef
 
-    server = 'outdoorfusionserver.database.windows.net'
     username = 'floep'
     password = 'WaaromWilDePausNietGecremeerdWorden?HijLeeftNog'
+
+    server = 'outdoorfusionserver.database.windows.net'
     driver = '{ODBC Driver 17 for SQL Server}'
     trustedConnection = 'no'
 

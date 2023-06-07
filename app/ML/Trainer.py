@@ -97,6 +97,7 @@ class Trainer:
 # Relatively low MSE
 def createOrderQuantityDataset():
     data = Data()
+
     X, Y = data.getOrderQuantityXY()
     trainer = Trainer(X, Y, 64, 8, 0.01, 200)
 

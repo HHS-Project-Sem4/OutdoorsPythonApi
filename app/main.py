@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from app.ML.DataPredict import Predictor
 from app.Data.Updater import Updater
 import app.ML.Trainer as trainer
@@ -17,66 +17,87 @@ async def say_hello(name: str):
     return {"message": f"Hello {name}"}
 
 
-@app.get("/updateStar")
-async def root():
+@app.post("/updateStar/{confirmation}")
+async def updateStar(confirmation: str):
     try:
-        updater = Updater()
-        await updater.updateStar()
+        if confirmation == 'yes':
+            updater = Updater()
+            await updater.updateStar()
 
-        return {"message": "Updated"}
+            return {"message": "Updated"}
+        else:
+            return {"message": "Wrong confirmation"}
     except:
-        return {"message": "Update failed"}
+        return HTTPException(status_code=400, detail="Update Failed")
 
 
 # Input format below
-# inputValues = {
-#     'Country' : 'UK',
-#     'Product' : 'LL Road Pedal',
-#     'Category' : 'Components',
-#     'SubCategory' : 'Pedals',
+# {
+#   "Country": "UK",
+#   "Product": "LL Road Pedal",
+#   "Category": "Components",
+#   "SubCategory": "Pedals"
 # }
-@app.get("/predict/unitprice")
-async def getUnitPricePrediction(inputValues):
-    path = 'unitprice_data.pth'
+@app.post("/predict/unitprice")
+async def getUnitPricePrediction(input: dict):
+    path = 'app/ML/unitprice_data.pth'
 
     datasets = Data()
     X, Y = datasets.getOrderQuantityXY()
 
     predictor = Predictor(path, X.columns)
 
-    values = datasets.getMonthValues(inputValues)
+    values = {
+          "Country": input.get("Country"),
+          "Product": input.get("Product"),
+          "Category": input.get("Category"),
+          "SubCategory": input.get("SubCategory")
+    }
+    values = datasets.getMonthValues(values)
     predictedValue = predictor.predict(values, 'Predicted_Price')
 
-    return predictedValue
+    return predictedValue.to_json(orient='records', index=False)
 
 
 # Input format below
-# inputValues = {
-#     'Country' : 'UK',
-#     'Product' : 'LL Road Pedal',
-#     'Category' : 'Components',
-#     'SubCategory' : 'Pedals',
+# {
+#   "Country": "UK",
+#   "Product": "LL Road Pedal",
+#   "Category": "Components",
+#   "SubCategory": "Pedals"
 # }
-@app.get("/predict/orderquantity")
-async def getOrderQuantiyPrediction(inputValues):
-    path = 'orderquantity_data.pth'
+@app.post("/predict/orderquantity")
+async def getOrderQuantiyPrediction(input: dict):
+    print(input)
+
+    path = 'app/ML/orderquantity_data.pth'
 
     datasets = Data()
     X, Y = datasets.getOrderQuantityXY()
 
     predictor = Predictor(path, X.columns)
 
-    values = datasets.getMonthValues(inputValues)
+    values = {
+          "Country": input.get("Country"),
+          "Product": input.get("Product"),
+          "Category": input.get("Category"),
+          "SubCategory": input.get("SubCategory")
+    }
+    values = datasets.getMonthValues(values)
     predictedValue = predictor.predict(values, 'Predicted_Quantity')
 
-    return predictedValue
+    return predictedValue.to_json(orient='records' , index=False)
 
 
-@app.get("/train/orderquantity")
+@app.post("/train/orderquantity")
 async def buildTrainingOrderQuantity():
+    print('TRAIN ORDER QUANTITY')
+
     trainer.createOrderQuantityDataset()
 
 
-@app.get("/train/unitprice")
+@app.post("/train/unitprice")
 async def buildTrainingUnitPrice():
+    print('TRAIN UNIT PRICE')
+
     trainer.createUnitPriceDataset()

@@ -6,8 +6,7 @@ from app.Data.Services.SalesService import SalesService
 
 
 class Updater:
-
-    def updateStar(self):
+    async def updateStar(self):
         etlService = ETLService()
 
         northWindService = NorthwindService()
@@ -23,8 +22,3 @@ class Updater:
         ]
 
         etlService.updateStar(dataSets)
-
-
-u = Updater()
-
-u.updateStar()

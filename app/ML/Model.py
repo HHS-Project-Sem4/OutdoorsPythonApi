@@ -19,3 +19,4 @@ class NeuralNet(nn.Module):
 
         # activation and softmax will be done later
         return out
+
