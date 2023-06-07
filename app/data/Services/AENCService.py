@@ -1,8 +1,8 @@
 import pandas as pd
 
-from app.data.Services.AbstractStarService import StarService
+from app.Data.Services.AbstractStarService import StarService
 from app.Tools import EtlUtil
-from app.data.Repositories.AENCRepository import AENCRepository
+from app.Data.Repositories.AENCRepository import AENCRepository
 from app.Tools import DbUtil
 
 class AENCService(StarService):

@@ -1,7 +1,7 @@
 import pandas as pd
 
-from app.data.Services.AbstractStarService import StarService
-from app.data.Repositories.AdventureWorksRepository import AdventureRepository
+from app.Data.Services.AbstractStarService import StarService
+from app.Data.Repositories.AdventureWorksRepository import AdventureRepository
 from app.Tools import DbUtil, EtlUtil
 
 

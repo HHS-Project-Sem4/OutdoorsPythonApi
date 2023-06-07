@@ -1,13 +1,12 @@
 import numpy as np
 import torch
 import pandas as pd
-from Model import NeuralNet
-from OutdoorFusionDataset import Data
+from app.ML.Model import NeuralNet
 
 
 class Predictor:
 
-    def __init__(self, path):
+    def __init__(self, path, columns):
         saved_data = torch.load(path)
 
         model_state = saved_data["model_state"]
@@ -20,12 +19,9 @@ class Predictor:
         self.model.load_state_dict(model_state)
 
         # Dataset columns / maybe try to find other way to get x amount of columns
-        data = Data()
-        X, Y = data.getXYTensor()
+        self.XColumns = columns
 
-        self.XColumns = X.columns
-
-    # data should be an object like below
+    # Data should be an object like below
     # mock_data = {
     #     "CUSTOMER_country": ["USA"],
     #     "PRODUCT_name": ["LL Crankset"],
@@ -47,7 +43,7 @@ class Predictor:
         # Convert the predictions to a NumPy array or DataFrame
         predictions_array = predictions.numpy()
 
-        # Combine the input data with the predictions (if desired)
+        # Combine the input Data with the predictions (if desired)
         result_df = pd.concat([dataFrame, pd.DataFrame(predictions_array, columns=[predictedValueName])], axis=1)
 
         return result_df

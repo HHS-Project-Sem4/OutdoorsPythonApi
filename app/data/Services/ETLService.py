@@ -1,8 +1,8 @@
 from app.Tools import CleaningUtil as cleaningUtil
 from app.Tools import DbUtil
 from app.Tools import EtlUtil
-from app.data.Repositories.CrudRepository import Repository
-from app.data.Services.CrudService import CrudService
+from app.Data.Repositories.CrudRepository import Repository
+from app.Data.Services.CrudService import CrudService
 
 
 class ETLService(CrudService):

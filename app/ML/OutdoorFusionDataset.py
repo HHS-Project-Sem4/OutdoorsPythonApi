@@ -1,4 +1,4 @@
-from app.data.Repositories.CrudRepository import Repository
+from app.Data.Repositories.CrudRepository import Repository
 from app.Tools import DbUtil as dbUtil
 import pandas as pd
 

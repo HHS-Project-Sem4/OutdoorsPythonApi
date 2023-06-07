@@ -1,5 +1,5 @@
 import pandas as pd
-from app.data.Repositories.CrudRepository import Repository
+from app.Data.Repositories.CrudRepository import Repository
 
 
 class NorthwindRepository(Repository):

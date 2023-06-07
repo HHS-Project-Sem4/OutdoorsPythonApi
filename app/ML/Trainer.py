@@ -87,8 +87,8 @@ class Trainer:
             "input_size": self.input_size,
             "output_size": self.output_size,
             "hidden_size": self.hidden_size,
-            "columns": self.Y,
-            "tags": self.X,
+            "data": self.X,
+            "tags": self.Y,
         }
 
         return data
@@ -98,7 +98,7 @@ class Trainer:
 def createOrderQuantityDataset():
     data = Data()
     X, Y = data.getOrderQuantityXY()
-    trainer = Trainer(X, Y, 64, 8, 0.01, 1000)
+    trainer = Trainer(X, Y, 64, 8, 0.01, 200)
 
     trainer.train()
     data = trainer.getTrainedData()
@@ -113,7 +113,7 @@ def createOrderQuantityDataset():
 def createUnitPriceDataset():
     data = Data()
     X, Y = data.getUnitPriceXY()
-    trainer = Trainer(X, Y, 64, 8, 0.01, 1000)
+    trainer = Trainer(X, Y, 64, 8, 0.01, 200)
 
     trainer.train()
     data = trainer.getTrainedData()
@@ -124,4 +124,4 @@ def createUnitPriceDataset():
     print(f"Training complete. File saved to {FILE}")
 
 
-createOrderQuantityDataset()
+createUnitPriceDataset()
