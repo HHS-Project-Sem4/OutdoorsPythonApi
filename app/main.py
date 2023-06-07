@@ -1,4 +1,6 @@
-from fastapi import FastAPI, HTTPException
+import asyncio
+
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from app.ML.DataPredict import Predictor
 from app.Data.Updater import Updater
 import app.ML.Trainer as trainer
@@ -18,17 +20,22 @@ async def say_hello(name: str):
 
 
 @app.post("/updateStar/{confirmation}")
-async def updateStar(confirmation: str):
+async def updateStar(confirmation: str, background_tasks: BackgroundTasks):
     try:
         if confirmation == 'yes':
-            updater = Updater()
-            await updater.updateStar()
-
-            return {"message": "Updated"}
+            background_tasks.add_task(updateStarScheme)
         else:
             return {"message": "Wrong confirmation"}
     except:
         return HTTPException(status_code=400, detail="Update Failed")
+
+
+async def updateStarScheme():
+    # Your logic for creating the order quantity dataset
+    print('Updating database...')
+    updater = Updater()
+    updater.updateStar()
+    print('Updating complete')
 
 
 # Input format below
@@ -48,10 +55,10 @@ async def getUnitPricePrediction(input: dict):
     predictor = Predictor(path, X.columns)
 
     values = {
-          "Country": input.get("Country"),
-          "Product": input.get("Product"),
-          "Category": input.get("Category"),
-          "SubCategory": input.get("SubCategory")
+        "Country": input.get("Country"),
+        "Product": input.get("Product"),
+        "Category": input.get("Category"),
+        "SubCategory": input.get("SubCategory")
     }
     values = datasets.getMonthValues(values)
     predictedValue = await predictor.predict(values, 'Predicted_Price')
@@ -78,26 +85,46 @@ async def getOrderQuantiyPrediction(input: dict):
     predictor = Predictor(path, X.columns)
 
     values = {
-          "Country": input.get("Country"),
-          "Product": input.get("Product"),
-          "Category": input.get("Category"),
-          "SubCategory": input.get("SubCategory")
+        "Country": input.get("Country"),
+        "Product": input.get("Product"),
+        "Category": input.get("Category"),
+        "SubCategory": input.get("SubCategory")
     }
     values = datasets.getMonthValues(values)
     predictedValue = await predictor.predict(values, 'Predicted_Quantity')
 
-    return predictedValue.to_json(orient='records' , index=False)
+    return predictedValue.to_json(orient='records', index=False)
 
 
-@app.post("/train/orderquantity")
-async def buildTrainingOrderQuantity():
+async def create_order_quantity_dataset():
+    # Your logic for creating the order quantity dataset
+    print('Creating order quantity dataset...')
+    # Simulating a long-running task
+    trainer.createOrderQuantityDataset()
+    print('Order quantity dataset creation complete')
+
+
+@app.post("/build-training-order-quantity")
+async def build_training_order_quantity(background_tasks: BackgroundTasks):
     print('TRAIN ORDER QUANTITY')
 
-    await trainer.createOrderQuantityDataset()
+    background_tasks.add_task(create_order_quantity_dataset)
+
+    return {"message": "Build complete"}
+
+
+async def createUnitPricedataset():
+    # Your logic for creating the order quantity dataset
+    print('Creating order quantity dataset...')
+    # Simulating a long-running task
+    trainer.createUnitPriceDataset()
+    print('Order quantity dataset creation complete')
 
 
 @app.post("/train/unitprice")
-async def buildTrainingUnitPrice():
-    print('TRAIN UNIT PRICE')
+async def buildTrainingUnitPrice(background_tasks: BackgroundTasks):
+    print('TRAIN ORDER QUANTITY')
 
-    await trainer.createUnitPriceDataset()
+    background_tasks.add_task(createUnitPricedataset)
+
+    return {"message": "Build complete"}

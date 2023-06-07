@@ -60,7 +60,7 @@ class Trainer:
             self.model.parameters(), lr=self.learning_rate
         )
 
-    async def train(self):
+    def train(self):
         print("START LOOP")
         for epoch in range(self.num_epochs):
             print(f"EPOCH : {epoch}")
@@ -80,7 +80,7 @@ class Trainer:
 
         print(f"final loss: {loss.item():.4f}")
 
-    async def getTrainedData(self):
+    def getTrainedData(self):
         # Save trained dataset
         data = {
             "model_state": self.model.state_dict(),
@@ -95,14 +95,14 @@ class Trainer:
 
 
 # Relatively low MSE
-async def createOrderQuantityDataset():
+def createOrderQuantityDataset():
     data = Data()
 
     X, Y = data.getOrderQuantityXY()
-    trainer = Trainer(X, Y, 64, 8, 0.01, 200)
+    trainer = Trainer(X, Y, 64, 8, 0.01, 50)
 
-    await trainer.train()
-    data = await trainer.getTrainedData()
+    trainer.train()
+    data = trainer.getTrainedData()
 
     FILE = "orderquantity_data.pth"
     torch.save(data, FILE)
@@ -111,13 +111,13 @@ async def createOrderQuantityDataset():
 
 
 # High MSE
-async def createUnitPriceDataset():
+def createUnitPriceDataset():
     data = Data()
     X, Y = data.getUnitPriceXY()
-    trainer = Trainer(X, Y, 64, 8, 0.01, 200)
+    trainer = Trainer(X, Y, 64, 8, 0.01, 50)
 
-    await trainer.train()
-    data = await trainer.getTrainedData()
+    trainer.train()
+    data = trainer.getTrainedData()
 
     FILE = "unitprice_data.pth"
     torch.save(data, FILE)
