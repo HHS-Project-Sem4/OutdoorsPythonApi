@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import pandas as pd
-from app.ML.Model import NeuralNet
+from app.Deep_Learning.Model import NeuralNet
 
 
 class Predictor:
@@ -21,15 +21,6 @@ class Predictor:
         # Dataset columns / maybe try to find other way to get x amount of columns
         self.XColumns = columns
 
-    # Data should be an object like below
-    # mock_data = {
-    #     "CUSTOMER_country": ["USA"],
-    #     "PRODUCT_name": ["LL Crankset"],
-    #     "PRODUCT_category": ["Components"],
-    #     "PRODUCT_sub_category": ["Cranksets"],
-    #     "DAY_QUARTER_nr": ["1"],
-    #     "DAY_MONTH_nr": ["1"],
-    # }
     async def predict(self, data, predictedValueName):
         dataFrame = pd.DataFrame(data)
 

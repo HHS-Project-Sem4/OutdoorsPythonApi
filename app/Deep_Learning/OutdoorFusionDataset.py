@@ -23,36 +23,38 @@ class Data:
 
         self.mergedData = mergedData
 
+    def getDataXY(self, yColumn, allColumns):
+        # Select relevant columns
+        selectedColumns = allColumns
+
+        selectedData = self.mergedData[selectedColumns]
+        selectedData = selectedData.dropna()
+
+        encodedData = self.encodeData(selectedData)
+
+        X = encodedData.drop(yColumn, axis=1)
+        Y = encodedData[yColumn]
+
+        return X, Y
+
     def getOrderQuantityXY(self):
         # Select relevant columns
         selectedColumns = ['CUSTOMER_country', 'PRODUCT_name', 'PRODUCT_category', 'PRODUCT_sub_category',
                            'ORDER_DETAIL_order_quantity',
                            'DAY_QUARTER_nr', 'DAY_MONTH_nr']
 
-        selectedData = self.mergedData[selectedColumns]
-        selectedData = selectedData.dropna()
+        yColumn = 'ORDER_DETAIL_order_quantity'
 
-        encodedData = self.encodeData(selectedData)
-
-        X = encodedData.drop('ORDER_DETAIL_order_quantity', axis=1)
-        Y = encodedData['ORDER_DETAIL_order_quantity']
-
-        return X, Y
+        return self.getDataXY(yColumn, selectedColumns)
 
     def getUnitPriceXY(self):
         # Select relevant columns
         selectedColumns = ['CUSTOMER_country', 'PRODUCT_name', 'PRODUCT_category', 'PRODUCT_sub_category',
                            'ORDER_DETAIL_unit_price', 'DAY_QUARTER_nr', 'DAY_MONTH_nr']
 
-        selectedData = self.mergedData[selectedColumns]
-        selectedData = selectedData.dropna()
+        yColumn = 'ORDER_DETAIL_unit_price'
 
-        encodedData = self.encodeData(selectedData)
-
-        X = encodedData.drop('ORDER_DETAIL_unit_price', axis=1)
-        Y = encodedData['ORDER_DETAIL_unit_price']
-
-        return X, Y
+        return self.getDataXY(yColumn, selectedColumns)
 
     def encodeData(self, data):
         # Encode date into numeric values
@@ -64,7 +66,6 @@ class Data:
         return encodedData
 
     def getMonthValues(self, inputValues):
-
         country = inputValues['Country']
         product = inputValues['Product']
         category = inputValues['Category']

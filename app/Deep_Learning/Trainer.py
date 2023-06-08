@@ -3,8 +3,8 @@ import torch.nn as nn
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader
 
-from app.ML.Model import NeuralNet
-from app.ML.OutdoorFusionDataset import Data
+from app.Deep_Learning.Model import NeuralNet
+from app.Deep_Learning.OutdoorFusionDataset import Data
 
 
 class TestSet(Dataset):
@@ -49,7 +49,7 @@ class Trainer:
         )
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        print(self.device)
+        print(f'USING : {self.device}')
 
         self.model = NeuralNet(
             self.input_size, self.hidden_size, self.output_size
@@ -97,15 +97,14 @@ class Trainer:
 # Relatively low MSE
 def createOrderQuantityDataset():
     data = Data()
-
     X, Y = data.getOrderQuantityXY()
+
     trainer = Trainer(X, Y, 64, 8, 0.01, 50)
 
     trainer.train()
     data = trainer.getTrainedData()
 
     FILE = "app/orderquantity_data.pth"
-
     torch.save(data, FILE)
 
     print(f"Training complete. File saved to {FILE}")
@@ -115,6 +114,7 @@ def createOrderQuantityDataset():
 def createUnitPriceDataset():
     data = Data()
     X, Y = data.getUnitPriceXY()
+
     trainer = Trainer(X, Y, 64, 8, 0.01, 50)
 
     trainer.train()

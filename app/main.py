@@ -1,12 +1,24 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 
-import app.ML.Trainer as trainer
+import app.Deep_Learning.Trainer as trainer
 from app.Data.Updater import Updater
-from app.ML.DataPredict import Predictor
-from app.ML.OutdoorFusionDataset import Data
+from app.Deep_Learning.DataPredict import Predictor
+from app.Deep_Learning.OutdoorFusionDataset import Data
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+# Configure CORS settings
+origins = ["*"]  # Set the allowed origins, or use a list of specific origins
+
+# Add CORS middleware to the FastAPI app
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # You can restrict the HTTP methods if needed
+    allow_headers=["*"],  # You can restrict the headers if needed
+)
 
 @app.get("/")
 async def root():
@@ -128,7 +140,7 @@ async def createUnitPricedataset():
 
 @app.post("/train/unitprice")
 async def build_Training_Unit_Price(background_tasks: BackgroundTasks):
-    print('TRAIN ORDER QUANTITY')
+    print('TRAIN UNIT PRICE')
 
     background_tasks.add_task(createUnitPricedataset)
 
